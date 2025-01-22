@@ -1,0 +1,57 @@
+{
+  "name": "sui-agent-kit",
+  "version": "1.4.0",
+  "description": "connect any ai agents to sui protocols",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "docs": "typedoc src --out docs",
+    "test": "tsx test/index.ts",
+    "test:vercel-ai": "tsx test/agent_sdks/vercel_ai.ts",
+    "generate": "tsx src/utils/keypair.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prepare": "husky"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "keywords": [],
+  "author": "Nimbus",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ai-sdk/openai": "^1.0.11",
+    "@langchain/core": "^0.3.26",
+    "@langchain/groq": "^0.1.2",
+    "@langchain/langgraph": "^0.2.36",
+    "@langchain/openai": "^0.3.16",
+    "@mysten/sui": "^1.19.0",
+    "ai": "^4.0.22",
+    "axios": "^1.7.9",
+    "bignumber.js": "^9.1.2",
+    "dotenv": "^16.4.7",
+    "langchain": "^0.3.8",
+    "openai": "^4.77.0",
+    "pino": "^9.6.0",
+    "typedoc": "^0.27.6",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.6",
+    "@types/chai": "^5.0.1",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
