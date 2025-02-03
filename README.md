@@ -20,7 +20,7 @@ Anyone - whether an SF-based AI researcher or a crypto-native builder - can brin
 https://www.loom.com/share/b61c8f57e0104006bda16bc85e4b23dc
 
 ## 📃 Documentation
-You can view the full documentation of the kit at [docs.getnimbus.io](https://docs.getnimbus.io)
+You can view the full documentation of the kit at [https://docs.getnimbus.io/sui-ai-agent/introduction](https://docs.getnimbus.io/sui-ai-agent/introduction)
 
 ## 📦 Installation
 
