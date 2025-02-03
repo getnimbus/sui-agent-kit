@@ -1,5 +1,5 @@
 {
-  "name": "sui-agent-kit",
+  "name": "@getnimbus/sui-agent-kit",
   "version": "0.0.1",
   "description": "connect any ai agents to sui protocols",
   "main": "dist/index.js",
