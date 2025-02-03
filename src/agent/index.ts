@@ -14,7 +14,7 @@ import { deploy_token } from "../tools/sui/token/deploy_token";
 import { stake } from "../tools/sui/defi/stake/stake";
 import { get_stake } from "../tools/sui/defi/stake/get_stake";
 import { unstake } from "../tools/sui/defi/stake/unstake";
-import { fromHex } from "@mysten/sui/utils";
+
 /**
  * Main class for interacting with Sui blockchain
  * Provides a unified interface for token operations, NFT management, trading and more
@@ -53,7 +53,7 @@ export class SuiAgentKit {
     this.client = new SuiClient({
       url: rpc_url || "https://fullnode.mainnet.sui.io:443",
     });
-    this.wallet = Ed25519Keypair.fromSecretKey(fromHex(private_key));
+    this.wallet = Ed25519Keypair.fromSecretKey(private_key);
     this.wallet_address = this.wallet.getPublicKey().toSuiAddress();
 
     // Handle both old and new patterns
