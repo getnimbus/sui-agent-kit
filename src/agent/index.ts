@@ -1,4 +1,4 @@
-import { DelegatedStake, SuiClient } from "@mysten/sui/client";
+import { DelegatedStake, getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { get_holding } from "../tools";
 import {
@@ -51,7 +51,7 @@ export class SuiAgentKit {
     configOrKey: Config | string | null,
   ) {
     this.client = new SuiClient({
-      url: rpc_url || "https://fullnode.mainnet.sui.io:443",
+      url: getFullnodeUrl("mainnet"),
     });
     this.wallet = Ed25519Keypair.fromSecretKey(private_key);
     this.wallet_address = this.wallet.getPublicKey().toSuiAddress();
