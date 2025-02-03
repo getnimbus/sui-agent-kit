@@ -1,8 +1,9 @@
 import { DelegatedStake, SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { get_holding } from "../tools";
+import { create_pool_cetus_CLMM, get_holding } from "../tools";
 import {
   Config,
+  ICreatePoolCLMMParams,
   StakedSui,
   TokenBalance,
   TransactionResponse,
@@ -99,5 +100,11 @@ export class SuiAgentKit {
 
   async unstake(stakedSui: StakedSui): Promise<TransactionResponse> {
     return unstake(this, stakedSui);
+  }
+
+  async createPoolCetusCLMM(
+    params: ICreatePoolCLMMParams,
+  ): Promise<TransactionResponse> {
+    return create_pool_cetus_CLMM(this, params);
   }
 }
