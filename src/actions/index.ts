@@ -6,6 +6,7 @@ import getWalletAddress from "./agent/getWalletAddress";
 import stake from "./agent/stake";
 import unstake from "./agent/unstake";
 import getStake from "./agent/getStake";
+import createPoolCetusCLMM from "./agent/createPoolCetusCLMM";
 
 export const ACTIONS = {
   CREATE_IMAGE_ACTION: createImageAction,
@@ -16,6 +17,7 @@ export const ACTIONS = {
   STAKE: stake,
   UNSTAKE: unstake,
   GET_STAKE: getStake,
+  CREATE_POOL_CETUS_CLMM: createPoolCetusCLMM,
 };
 
 export type { Action, ActionExample, Handler } from "../types/action";
