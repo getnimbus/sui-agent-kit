@@ -18,19 +18,21 @@ export async function create_pool_cetus_CLMM(
   params: ICreatePoolCLMMParams,
 ) {
   try {
-    const coinMetadataAID = await agent.client.getCoinMetadata({
-      coinType: params.coinTypeA,
-    });
-    const coinMetadataBID = await agent.client.getCoinMetadata({
-      coinType: params.coinTypeB,
-    });
+    const [coinMetadataAID, coinMetadataBID] = await Promise.all([
+      agent.client.getCoinMetadata({
+        coinType: params.coinTypeA,
+      }),
+      agent.client.getCoinMetadata({
+        coinType: params.coinTypeB,
+      }),
+    ]);
 
     if (!coinMetadataAID || !coinMetadataBID) {
       throw new Error("Coin metadata not found");
     }
 
-    const decimalA = coinMetadataAID?.decimals ?? 0;
-    const decimalB = coinMetadataBID?.decimals ?? 0;
+    const decimalA = coinMetadataAID?.decimals ?? 9;
+    const decimalB = coinMetadataBID?.decimals ?? 9;
 
     // initialize sqrt_price
     const initialize_sqrt_price = TickMath.priceToSqrtPriceX64(
@@ -58,8 +60,8 @@ export async function create_pool_cetus_CLMM(
     const fix_coin_amount = new BN(params.inputTokenAmount);
     // input token amount is token a
     const fix_amount_a = params.isTokenAInput;
-    // slippage value 0.05 means 5%
-    const slippage = params.slippage;
+    // slippage default value 0.1 means 10%
+    const slippage = params.slippage ?? 0.1;
     const cur_sqrt_price = new BN(initialize_sqrt_price);
 
     // Estimate liquidity and token amount from one amounts

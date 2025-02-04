@@ -47,7 +47,7 @@ const createPoolCetusCLMM: Action = {
       .transform(Number),
     inputTokenAmount: z.number().positive(),
     isTokenAInput: z.boolean(),
-    slippage: z.number().min(0).max(1),
+    slippage: z.number().min(0).max(1).optional(),
   }),
   handler: async (agent: SuiAgentKit, input: Record<string, any>) => {
     const params: ICreatePoolCLMMParams = {

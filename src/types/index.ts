@@ -259,5 +259,5 @@ export interface ICreatePoolCLMMParams {
   tickSpacing: 2 | 10 | 20 | 60 | 200 | 220;
   inputTokenAmount: number;
   isTokenAInput: boolean;
-  slippage: number; // 0.05 means 5%
+  slippage: number | undefined; // 0.05 means 5%
 }

@@ -7,13 +7,13 @@ export class SuiCreatePoolCetusCLMMTool extends Tool {
   description = `Create a new Cetus CLMM (Concentrated Liquidity Market Maker) pool.
 
   Inputs (input is a JSON string):
-  coinTypeA: string - The coin type for token A
-  coinTypeB: string - The coin type for token B
-  initializePrice: number - Initial price ratio between tokens
-  tickSpacing: number - Must be one of: 2, 10, 20, 60, 200, 220
-  inputTokenAmount: number - Amount of input token to add as liquidity
-  isTokenAInput: boolean - Whether token A is the input token
-  slippage: number - Slippage tolerance (e.g., 0.05 for 5%)`;
+  coinTypeA: string - The coin type for token A (required)
+  coinTypeB: string - The coin type for token B (required)
+  initializePrice: number - Initial price ratio between tokens (required)
+  tickSpacing: number - Must be one of: 2, 10, 20, 60, 200, 220 (required)
+  inputTokenAmount: number - Amount of input token to add as liquidity (required)
+  isTokenAInput: boolean - Whether token A is the input token (required)
+  slippage: number - Slippage tolerance (e.g., 0.05 for 5%) (optional)`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
