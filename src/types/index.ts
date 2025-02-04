@@ -251,3 +251,13 @@ export interface StakedSui {
   stake_activation_epoch: number;
   principal: string;
 }
+
+export interface ICreatePoolCLMMParams {
+  coinTypeA: string;
+  coinTypeB: string;
+  initializePrice: number;
+  tickSpacing: 2 | 10 | 20 | 60 | 200 | 220;
+  inputTokenAmount: number;
+  isTokenAInput: boolean;
+  slippage: number | undefined; // 0.05 means 5%
+}
