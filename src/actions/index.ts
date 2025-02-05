@@ -7,6 +7,7 @@ import stake from "./agent/stake";
 import unstake from "./agent/unstake";
 import getStake from "./agent/getStake";
 import createPoolCetusCLMM from "./agent/createPoolCetusCLMM";
+import swapToken from "./agent/swap";
 
 export const ACTIONS = {
   CREATE_IMAGE_ACTION: createImageAction,
@@ -18,6 +19,7 @@ export const ACTIONS = {
   UNSTAKE: unstake,
   GET_STAKE: getStake,
   CREATE_POOL_CETUS_CLMM: createPoolCetusCLMM,
+  SWAP_TOKEN: swapToken,
 };
 
 export type { Action, ActionExample, Handler } from "../types/action";

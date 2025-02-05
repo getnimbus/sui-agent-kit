@@ -1,0 +1,54 @@
+import { Action } from "../../types/action";
+import { SuiAgentKit } from "../../agent";
+import { z } from "zod";
+import { swap } from "../../tools/sui/token/swap";
+import { ISwapParams } from "../../types";
+
+const swapToken: Action = {
+  name: "SWAP_TOKEN",
+  similes: ["swap", "swap token", "exchange token", "trade token"],
+  description: "Swap tokens using 7k protocol",
+  examples: [
+    [
+      {
+        input: {
+          fromToken: "0x2::sui::SUI",
+          toToken:
+            "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+          inputAmount: 10,
+          slippage: 0.01,
+        },
+        output: {
+          status: "success",
+          result: {
+            tx_hash: "5JvBtQveYFsZFYxXMfSxYzUJgzGfyRgkH9YuZxpvuR9Y",
+            tx_status: "success",
+          },
+        },
+        explanation: "Successfully swapped 10 SUI for USDC with 1% slippage",
+      },
+    ],
+  ],
+  schema: z.object({
+    fromToken: z.string(),
+    toToken: z.string(),
+    inputAmount: z.number().positive(),
+    slippage: z.number().min(0).max(1).optional(),
+  }),
+  handler: async (agent: SuiAgentKit, input: Record<string, any>) => {
+    const params: ISwapParams = {
+      fromToken: input.fromToken,
+      toToken: input.toToken,
+      inputAmount: input.inputAmount,
+      slippage: input.slippage,
+    };
+    const result = await swap(agent, params);
+
+    return {
+      status: "success",
+      result,
+    };
+  },
+};
+
+export default swapToken;

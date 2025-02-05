@@ -254,3 +254,10 @@ export interface ICreatePoolCLMMParams {
   isTokenAInput: boolean;
   slippage: number | undefined; // 0.05 means 5%
 }
+
+export interface ISwapParams {
+  fromToken: string;
+  toToken: string;
+  inputAmount: number;
+  slippage: number | undefined;
+}
