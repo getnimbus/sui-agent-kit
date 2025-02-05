@@ -14,6 +14,7 @@ import { deploy_token } from "../tools/sui/token/deploy_token";
 import { stake } from "../tools/sui/defi/stake/stake";
 import { get_stake } from "../tools/sui/defi/stake/get_stake";
 import { unstake } from "../tools/sui/defi/stake/unstake";
+import { register_sns } from "../tools/sns/register";
 
 /**
  * Main class for interacting with Sui blockchain
@@ -99,5 +100,13 @@ export class SuiAgentKit {
 
   async unstake(stakedSui: StakedSui): Promise<TransactionResponse> {
     return unstake(this, stakedSui);
+  }
+
+  async registerSns(
+    name: string,
+    years: number,
+    payToken: string,
+  ): Promise<TransactionResponse> {
+    return register_sns(this, name, years, payToken);
   }
 }
