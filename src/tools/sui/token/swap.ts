@@ -30,10 +30,10 @@ export async function swap(
       throw new Error(`Token ${params.fromToken} not found in wallet`);
     }
 
-    if (
-      Number(balance.totalBalance) / 10 ** (metadata?.decimals || 9) <
-      params.inputAmount
-    ) {
+    const adjustInputAmount =
+      params.inputAmount * 10 ** (metadata?.decimals || 9);
+
+    if (Number(balance.totalBalance) < adjustInputAmount) {
       throw new Error("Insufficient balance");
     }
 
@@ -41,9 +41,7 @@ export async function swap(
     const quoteResponse: any = await getQuote({
       tokenIn: params.fromToken,
       tokenOut: params.toToken,
-      amountIn: BigInt(
-        params.inputAmount * 10 ** (metadata?.decimals || 9),
-      ).toString(),
+      amountIn: BigInt(adjustInputAmount).toString(),
     });
 
     const txBuild = await buildTx({
