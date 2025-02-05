@@ -6,10 +6,7 @@ export class SuiUnstakeTool extends Tool {
   description = `Unstake SUI tokens from a validator pool.
 
   Inputs (input is a JSON string):
-  id: string - The ID of the staked SUI object to unstake
-  stake_object_id: string - The ID of staked object
-  stake_activation_epoch: number - The epoch at which the stake was activated
-  principal: string - The amount of SUI to unstake`;
+  stakedSuiId: string - The ID of the staked SUI object to unstake`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
@@ -18,12 +15,7 @@ export class SuiUnstakeTool extends Tool {
   async _call(input: string): Promise<string> {
     const parsedInput = JSON.parse(input);
     try {
-      const result = await this.suiKit.unstake({
-        id: parsedInput.id,
-        stake_object_id: parsedInput.stake_object_id,
-        stake_activation_epoch: parsedInput.stake_activation_epoch,
-        principal: parsedInput.principal,
-      });
+      const result = await this.suiKit.unstake(parsedInput.stakedSuiId);
       return JSON.stringify({
         status: "success",
         result: {

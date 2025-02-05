@@ -245,13 +245,6 @@ export interface TransactionResponse {
   tx_status: string;
 }
 
-export interface StakedSui {
-  id: string;
-  stake_object_id: string;
-  stake_activation_epoch: number;
-  principal: string;
-}
-
 export interface ICreatePoolCLMMParams {
   coinTypeA: string;
   coinTypeB: string;

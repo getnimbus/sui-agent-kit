@@ -4,7 +4,6 @@ import { create_pool_cetus_CLMM, get_holding } from "../tools";
 import {
   Config,
   ICreatePoolCLMMParams,
-  StakedSui,
   TokenBalance,
   TransactionResponse,
   TransferTokenResponse,
@@ -98,8 +97,8 @@ export class SuiAgentKit {
     return get_stake(this);
   }
 
-  async unstake(stakedSui: StakedSui): Promise<TransactionResponse> {
-    return unstake(this, stakedSui);
+  async unstake(stakedSuiId: string): Promise<TransactionResponse> {
+    return unstake(this, stakedSuiId);
   }
 
   async createPoolCetusCLMM(
