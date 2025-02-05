@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@7kprotocol/sdk-ts':
+        specifier: ^2.3.4
+        version: 2.3.4(@mysten/sui@1.19.0(typescript@5.7.2))(bignumber.js@9.1.2)(bn.js@5.2.1)
       '@ai-sdk/openai':
         specifier: ^1.0.11
         version: 1.0.11(zod@3.24.1)
@@ -121,6 +124,13 @@ packages:
     peerDependencies:
       graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
       typescript: ^5.0.0
+
+  '@7kprotocol/sdk-ts@2.3.4':
+    resolution: {integrity: sha512-zoRPgPrSWwb8Bya/YN611TZ21uKLKuK2JkDxhz1ocrLJzQzIEb8HEaEmZLYszGiXTrapVQiiDWngQiF774DcBw==}
+    peerDependencies:
+      '@mysten/sui': ^1.17.0
+      bignumber.js: ^9.1.2
+      bn.js: ^5.2.1
 
   '@ai-sdk/openai@1.0.11':
     resolution: {integrity: sha512-qI9s7Slma5i5bB4yYVlFdcG3PNDwdqivPT1Dr8adDX92nSSpILjgFIooS5yys9sXjvvcfOi/WXbDvVhLSRRlvg==}
@@ -1762,6 +1772,12 @@ snapshots:
       '@gql.tada/internal': 1.0.8(graphql@16.10.0)(typescript@5.7.2)
       graphql: 16.10.0
       typescript: 5.7.2
+
+  '@7kprotocol/sdk-ts@2.3.4(@mysten/sui@1.19.0(typescript@5.7.2))(bignumber.js@9.1.2)(bn.js@5.2.1)':
+    dependencies:
+      '@mysten/sui': 1.19.0(typescript@5.7.2)
+      bignumber.js: 9.1.2
+      bn.js: 5.2.1
 
   '@ai-sdk/openai@1.0.11(zod@3.24.1)':
     dependencies:

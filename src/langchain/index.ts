@@ -10,6 +10,7 @@ import { SuiGetStakeTool } from "./agent/get_stake";
 import { SuiUnstakeTool } from "./agent/unstake";
 import { SuiGetWalletAddressTool } from "./agent/get_wallet_address";
 import { SuiCreatePoolCetusCLMMTool } from "./agent/create_pool_cetus_clmm";
+import { SuiSwapTool } from "./agent/swap";
 
 export function createSuiTools(suiKit: SuiAgentKit) {
   return [
@@ -22,5 +23,6 @@ export function createSuiTools(suiKit: SuiAgentKit) {
     new SuiGetStakeTool(suiKit),
     new SuiUnstakeTool(suiKit),
     new SuiCreatePoolCetusCLMMTool(suiKit),
+    new SuiSwapTool(suiKit),
   ];
 }
