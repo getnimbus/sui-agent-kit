@@ -3,7 +3,7 @@ import { createSuiTools } from "../src/langchain";
 import { HumanMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
+import { ChatDeepSeek } from "@langchain/deepseek";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as readline from "readline";
@@ -35,9 +35,10 @@ const WALLET_DATA_FILE = "wallet_data.txt";
 
 async function initializeAgent() {
   try {
-    const llm = new ChatOpenAI({
-      modelName: "gpt-4o-mini",
+    const llm = new ChatDeepSeek({
+      model: "deepseek-reasoner",
       temperature: 0.3,
+      apiKey: process.env.OPENAI_API_KEY!,
     });
 
     let walletDataStr: string | null = null;

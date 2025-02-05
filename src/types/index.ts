@@ -2,6 +2,7 @@ import { SuiAgentKit } from "../agent";
 import { z } from "zod";
 
 export interface Config {
+  BASE_URL?: string;
   OPENAI_API_KEY?: string;
   JUPITER_REFERRAL_ACCOUNT?: string;
   JUPITER_FEE_BPS?: number;
