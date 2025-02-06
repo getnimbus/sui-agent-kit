@@ -27,6 +27,22 @@ const swapToken: Action = {
         },
         explanation: "Successfully swapped 10 SUI for USDC with 1% slippage",
       },
+      {
+        input: {
+          fromToken: "MIU",
+          toToken: "USDC",
+          inputAmount: 10,
+          slippage: 0.01,
+        },
+        output: {
+          status: "success",
+          result: {
+            tx_hash: "5JvBtQveYFsZFYxXMfSxYzUJgzGfyRgkH9YuZxpvuR9Y",
+            tx_status: "success",
+          },
+        },
+        explanation: "Successfully swapped 10 MIU for USDC with 1% slippage",
+      },
     ],
   ],
   schema: z.object({
