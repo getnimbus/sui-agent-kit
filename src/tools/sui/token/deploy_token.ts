@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransferTokenResponse } from "../../../index";
 import { Transaction } from "@mysten/sui/transactions";
-import logger from "~/utils/logger";
+import logger from "../../../utils/logger";
 import { CREATE_TOKEN_SUI_FEE } from "../../../constants";
 import {
   getBytecode,

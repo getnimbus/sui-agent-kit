@@ -1,6 +1,6 @@
 import { setSuiClient, getQuote, buildTx } from "@7kprotocol/sdk-ts";
 import { ISwapParams, SuiAgentKit, TransactionResponse } from "../../../index";
-import logger from "~/utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * Transfer token to another address

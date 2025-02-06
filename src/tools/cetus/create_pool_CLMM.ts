@@ -4,7 +4,7 @@ import { d } from "@cetusprotocol/cetus-sui-clmm-sdk";
 import { TickMath } from "@cetusprotocol/cetus-sui-clmm-sdk";
 import { SuiAgentKit } from "../../agent";
 import { ICreatePoolCLMMParams } from "../../types";
-import logger from "~/utils/logger";
+import logger from "../../utils/logger";
 
 /**
  * Stake SUI

@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransactionResponse } from "../../../index";
 import { Transaction } from "@mysten/sui/transactions";
-import logger from "~/utils/logger";
+import logger from "../../../utils/logger";
 /**
  * Transfer token to another address
  * @param agent - SuiAgentKit instance

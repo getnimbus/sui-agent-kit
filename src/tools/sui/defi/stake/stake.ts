@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransactionResponse } from "../../../../index";
 import { Transaction } from "@mysten/sui/transactions";
-import logger from "~/utils/logger";
+import logger from "../../../../utils/logger";
 import { SUI_COIN_TYPE, SUI_DECIMALS } from "../../../../constants";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 /**

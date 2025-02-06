@@ -1,6 +1,6 @@
 import { SuiAgentKit } from "../../index";
 import OpenAI from "openai";
-import logger from "~/utils/logger";
+import logger from "../../utils/logger";
 
 /**
  * Generate an image using OpenAI's DALL-E

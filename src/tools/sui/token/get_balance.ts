@@ -1,5 +1,5 @@
 import { SuiAgentKit, TokenBalance } from "../../../index";
-import logger from "~/utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * Get the holdings asset of SUI token for the agent's wallet
