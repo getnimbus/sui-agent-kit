@@ -29,7 +29,7 @@
     "@langchain/langgraph": "^0.2.36",
     "@langchain/openai": "^0.3.16",
     "@mysten/sui": "^1.19.0",
-    "@mysten/suins": "^0.7.0",
+    "@mysten/suins": "^0.6.3",
     "ai": "^4.0.22",
     "axios": "^1.7.9",
     "bignumber.js": "^9.1.2",

@@ -30,7 +30,7 @@ export async function register_sns(
     //   .then((res) => res[0]);
     // // Build the transaction to register the name, specifying a year from 1 to 5.
     // const nft = suinsTransaction.register({
-    //   domain: name,
+    //   domain: "fsdfsdfsfsd.sui",
     //   years: years,
     //   coinConfig,
     //   priceInfoObjectId, // Only required for SUI/NS
