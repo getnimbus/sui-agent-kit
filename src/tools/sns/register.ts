@@ -1,6 +1,7 @@
 import { SuinsClient, SuinsTransaction } from "@mysten/suins";
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import { Transaction } from "@mysten/sui/transactions";
+import { MIST_PER_SUI } from "@mysten/sui/utils";
 
 /**
  * Get the holdings asset of SUI token for the agent's wallet
@@ -14,37 +15,64 @@ export async function register_sns(
   payToken: string,
 ): Promise<TransactionResponse> {
   try {
-    // const suinsClient = new SuinsClient({
-    //   client: agent.client,
-    //   network: "mainnet",
-    // });
-    // // Create a transaction block as usual in your PTBs.
-    // const transaction = new Transaction();
-    // // Pass in the transaction block & the app's global SuinsClient.
-    // const suinsTransaction = new SuinsTransaction(suinsClient, transaction);
-    // // Specify the coin type used for the transaction, can be SUI/NS/USDC
-    // const coinConfig = suinsClient.config.coins.USDC;
-    // // priceInfoObjectId is required for SUI/NS
-    // const priceInfoObjectId = await suinsClient
-    //   .getPriceInfoObject(transaction, coinConfig.feed)
-    //   .then((res) => res[0]);
-    // // Build the transaction to register the name, specifying a year from 1 to 5.
-    // const nft = suinsTransaction.register({
-    //   domain: "fsdfsdfsfsd.sui",
-    //   years: years,
-    //   coinConfig,
-    //   priceInfoObjectId, // Only required for SUI/NS
-    // });
-    // // Transfer the name's NFT
-    // transaction.transferObjects(
-    //   [nft],
-    //   transaction.pure.address(agent.wallet_address),
-    // );
+    const suinsClient = new SuinsClient({
+      client: agent.client,
+      network: "mainnet",
+    });
 
-    // // execute the transaction
+    const tx = new Transaction();
+
+    const coinConfig = suinsClient.config.coins.SUI; // Specify the coin type used for the transaction
+    const priceInfoObjectId =
+      coinConfig !== suinsClient.config.coins.USDC
+        ? (await suinsClient.getPriceInfoObject(tx, coinConfig.feed))[0]
+        : null;
+
+    const suinsTx = new SuinsTransaction(suinsClient, tx);
+
+    const uniqueName =
+      (
+        Date.now().toString(36) + Math.random().toString(36).substring(2)
+      ).repeat(2) + ".sui";
+
+    const [coinInput] = suinsTx.transaction.splitCoins(
+      suinsTx.transaction.gas,
+      [5n * MIST_PER_SUI],
+    );
+
+    const nft = suinsTx.register({
+      domain: uniqueName,
+      years: 1,
+      coinConfig: suinsClient.config.coins.SUI,
+      coin: coinInput,
+      priceInfoObjectId,
+    });
+
+    // Sets the target address of the NFT.
+    suinsTx.setTargetAddress({
+      nft,
+      address: agent.wallet_address,
+      isSubname: false,
+    });
+
+    /* Optionally transfer the NFT */
+    // suinsTx.transaction.transferObjects([nft], "0xMyAddress");
+
+    tx.setSender(agent.wallet_address);
+    tx.setGasBudget(10 * 10 ** 9); // TODO: remove this in production, only use for dry run
+
+    const res = await agent.client.dryRunTransactionBlock({
+      transactionBlock: await tx.build({
+        client: agent.client,
+      }),
+    });
+
+    console.log(res);
+
+    // execute the transaction
     // const txExec = await agent.client.signAndExecuteTransaction({
     //   signer: agent.wallet,
-    //   transaction: transaction,
+    //   transaction: tx,
     // });
 
     // // wait for the transaction to be executed

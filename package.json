@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc && copyfiles -u 3 src/utils/move-template/move-bytecode-template.js dist/utils/move-template",
     "docs": "typedoc src --out docs",
-    "test": "tsx test/index.ts",
+    "test": "tsx src/test.ts",
     "test:vercel-ai": "tsx test/agent_sdks/vercel_ai.ts",
     "generate": "tsx src/utils/keypair.ts",
     "lint": "eslint . --ext .ts",
