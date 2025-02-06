@@ -4,6 +4,7 @@ import { d } from "@cetusprotocol/cetus-sui-clmm-sdk";
 import { TickMath } from "@cetusprotocol/cetus-sui-clmm-sdk";
 import { SuiAgentKit } from "../../agent";
 import { ICreatePoolCLMMParams } from "../../types";
+import logger from "~/utils/logger";
 
 /**
  * Stake SUI
@@ -124,7 +125,7 @@ export async function create_pool_cetus_CLMM(
       tx_status: res.effects?.status.status || "unknown",
     };
   } catch (error: any) {
-    console.error(error);
+    logger.error(error);
     throw new Error(`Failed to create pool: ${error.message}`);
   }
 }

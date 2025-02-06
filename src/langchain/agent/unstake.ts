@@ -13,8 +13,8 @@ export class SuiUnstakeTool extends Tool {
   }
 
   async _call(input: string): Promise<string> {
-    const parsedInput = JSON.parse(input);
     try {
+      const parsedInput = JSON.parse(input);
       const result = await this.suiKit.unstake(parsedInput.stakedSuiId);
       return JSON.stringify({
         status: "success",
@@ -23,8 +23,12 @@ export class SuiUnstakeTool extends Tool {
           tx_status: result.tx_status,
         },
       });
-    } catch (error) {
-      throw new Error("Failed to unstake SUI");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

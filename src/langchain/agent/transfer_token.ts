@@ -15,18 +15,23 @@ export class SuiTransferTokenTool extends Tool {
   }
 
   async _call(input: string): Promise<string> {
-    const parsedInput = JSON.parse(input);
     try {
+      const parsedInput = JSON.parse(input);
+      const tx_hash = await this.suiKit.transferToken(
+        parsedInput.token_symbol,
+        parsedInput.to,
+        parsedInput.amount,
+      );
       return JSON.stringify({
         status: "success",
-        tx_hash: await this.suiKit.transferToken(
-          parsedInput.token_symbol,
-          parsedInput.to,
-          parsedInput.amount,
-        ),
+        tx_hash,
       });
-    } catch (error) {
-      throw new Error("Failed to transfer token");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

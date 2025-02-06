@@ -15,8 +15,12 @@ export class SuiGetWalletAddressTool extends Tool {
         status: "success",
         wallet_address: this.suiKit.getWalletAddress(),
       });
-    } catch (error) {
-      throw new Error("Failed to get wallet address");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

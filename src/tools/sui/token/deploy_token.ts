@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransferTokenResponse } from "../../../index";
 import { Transaction } from "@mysten/sui/transactions";
-import logger from "../../../utils/logger";
+import logger from "~/utils/logger";
 import { CREATE_TOKEN_SUI_FEE } from "../../../constants";
 import {
   getBytecode,
@@ -88,8 +88,8 @@ export async function deploy_token(
       tx_hash: txExec.digest,
       tx_status: res.effects?.status.status || "unknown",
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
-    throw new Error("Failed to deploy token");
+    throw new Error(`Failed to deploy token: ${error.message}`);
   }
 }

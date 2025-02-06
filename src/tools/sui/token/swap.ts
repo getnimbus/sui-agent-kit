@@ -1,6 +1,6 @@
 import { setSuiClient, getQuote, buildTx } from "@7kprotocol/sdk-ts";
 import { ISwapParams, SuiAgentKit, TransactionResponse } from "../../../index";
-import logger from "../../../utils/logger";
+import logger from "~/utils/logger";
 
 /**
  * Transfer token to another address
@@ -71,8 +71,8 @@ export async function swap(
       tx_hash: txExec.digest,
       tx_status: tx.effects?.status.status || "unknown",
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
-    throw new Error("Failed to transfer token");
+    throw new Error(`Failed to transfer token: ${error.message}`);
   }
 }

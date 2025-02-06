@@ -37,8 +37,12 @@ export class SuiDeployTokenTool extends Tool {
         status: "success",
         tx_hash: result,
       });
-    } catch (error) {
-      throw new Error("Failed to deploy token: " + (error as Error).message);
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

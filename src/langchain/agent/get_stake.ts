@@ -16,8 +16,12 @@ export class SuiGetStakeTool extends Tool {
         status: "success",
         result: stakes,
       });
-    } catch (error) {
-      throw new Error("Failed to get stake information");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

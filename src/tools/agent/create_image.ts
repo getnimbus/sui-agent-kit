@@ -1,5 +1,6 @@
 import { SuiAgentKit } from "../../index";
 import OpenAI from "openai";
+import logger from "~/utils/logger";
 
 /**
  * Generate an image using OpenAI's DALL-E
@@ -39,6 +40,7 @@ export async function create_image(
       images: response.data.map((img: any) => img.url),
     };
   } catch (error: any) {
-    throw new Error(`Image generation failed: ${error.message}`);
+    logger.error(error);
+    throw new Error(`Failed to generate image: ${error.message}`);
   }
 }

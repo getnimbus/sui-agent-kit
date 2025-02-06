@@ -20,8 +20,8 @@ export class SuiCreatePoolCetusCLMMTool extends Tool {
   }
 
   async _call(input: string): Promise<string> {
-    const parsedInput = JSON.parse(input) as ICreatePoolCLMMParams;
     try {
+      const parsedInput = JSON.parse(input) as ICreatePoolCLMMParams;
       const result = await this.suiKit.createPoolCetusCLMM(parsedInput);
       return JSON.stringify({
         status: "success",
@@ -30,8 +30,12 @@ export class SuiCreatePoolCetusCLMMTool extends Tool {
           tx_status: result.tx_status,
         },
       });
-    } catch (error) {
-      throw new Error("Failed to create Cetus CLMM pool");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

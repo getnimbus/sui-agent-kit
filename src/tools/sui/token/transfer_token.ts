@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransactionResponse } from "../../../index";
 import { Transaction } from "@mysten/sui/transactions";
-import logger from "../../../utils/logger";
+import logger from "~/utils/logger";
 /**
  * Transfer token to another address
  * @param agent - SuiAgentKit instance
@@ -104,8 +104,8 @@ export async function transfer_token(
       tx_hash: txExec.digest,
       tx_status: res.effects?.status.status || "unknown",
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
-    throw new Error("Failed to transfer token");
+    throw new Error(`Failed to transfer token: ${error.message}`);
   }
 }

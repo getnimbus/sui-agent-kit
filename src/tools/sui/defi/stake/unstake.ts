@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransactionResponse } from "../../../../index";
 import { Transaction } from "@mysten/sui/transactions";
-import logger from "../../../../utils/logger";
+import logger from "~/utils/logger";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 /**
  * Stake SUI
@@ -47,8 +47,8 @@ export async function unstake(
       tx_hash: txExec.digest,
       tx_status: res.effects?.status.status || "unknown",
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
-    throw new Error("Failed to stake");
+    throw new Error(`Failed to unstake: ${error.message}`);
   }
 }
