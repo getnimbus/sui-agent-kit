@@ -1,5 +1,6 @@
 import { SuiAgentKit } from "../../index";
 import OpenAI from "openai";
+import logger from "../../utils/logger";
 
 /**
  * Generate an image using OpenAI's DALL-E
@@ -20,9 +21,14 @@ export async function create_image(
       throw new Error("OpenAI API key not found in agent configuration");
     }
 
-    const openai = new OpenAI({
-      apiKey: agent.config.OPENAI_API_KEY,
-    });
+    const openai = agent.config.BASE_URL
+      ? new OpenAI({
+          apiKey: agent.config.OPENAI_API_KEY,
+          baseURL: agent.config.BASE_URL,
+        })
+      : new OpenAI({
+          apiKey: agent.config.OPENAI_API_KEY,
+        });
 
     const response = await openai.images.generate({
       prompt,
@@ -34,6 +40,7 @@ export async function create_image(
       images: response.data.map((img: any) => img.url),
     };
   } catch (error: any) {
-    throw new Error(`Image generation failed: ${error.message}`);
+    logger.error(error);
+    throw new Error(`Failed to generate image: ${error.message}`);
   }
 }

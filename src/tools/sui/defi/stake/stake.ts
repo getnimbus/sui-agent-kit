@@ -88,8 +88,8 @@ export async function stake(
       tx_hash: txExec.digest,
       tx_status: res.effects?.status.status || "unknown",
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
-    throw new Error("Failed to stake");
+    throw new Error(`Failed to stake: ${error.message}`);
   }
 }

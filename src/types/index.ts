@@ -2,6 +2,7 @@ import { SuiAgentKit } from "../agent";
 import { z } from "zod";
 
 export interface Config {
+  BASE_URL?: string;
   OPENAI_API_KEY?: string;
   JUPITER_REFERRAL_ACCOUNT?: string;
   JUPITER_FEE_BPS?: number;
@@ -245,9 +246,19 @@ export interface TransactionResponse {
   tx_status: string;
 }
 
-export interface StakedSui {
-  id: string;
-  stake_object_id: string;
-  stake_activation_epoch: number;
-  principal: string;
+export interface ICreatePoolCLMMParams {
+  coinTypeA: string;
+  coinTypeB: string;
+  initializePrice: number;
+  tickSpacing: 2 | 10 | 20 | 60 | 200 | 220;
+  inputTokenAmount: number;
+  isTokenAInput: boolean;
+  slippage: number | undefined; // 0.05 means 5%
+}
+
+export interface ISwapParams {
+  fromToken: string;
+  toToken: string;
+  inputAmount: number;
+  slippage: number | undefined;
 }

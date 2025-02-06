@@ -11,11 +11,8 @@ const unstakeToken: Action = {
     [
       {
         input: {
-          id: "0xf3ef91c45a640d695fefe69be34a6136aac88c9099ffdc16ed9920d84f3b261c",
-          stake_object_id:
-            "0x27af083bac1ff487317fe82a6cf968d88d459f9ef95813b83dd8b81322a2ed71",
-          stake_activation_epoch: 651,
-          principal: "1000000000",
+          stakedSuiId:
+            "0xad30008634871e4b3a26634160c20edb1f04adda274ee51e671583c0142d2eec",
         },
         output: {
           status: "success",
@@ -30,18 +27,10 @@ const unstakeToken: Action = {
     ],
   ],
   schema: z.object({
-    id: z.string(),
-    stake_object_id: z.string(),
-    stake_activation_epoch: z.number(),
-    principal: z.string(),
+    stakedSuiId: z.string(),
   }),
   handler: async (agent: SuiAgentKit, input: Record<string, any>) => {
-    const result = await unstake(agent, {
-      id: input.id,
-      stake_object_id: input.stake_object_id,
-      stake_activation_epoch: input.stake_activation_epoch,
-      principal: input.principal,
-    });
+    const result = await unstake(agent, input.stakedSuiId);
 
     return {
       status: "success",

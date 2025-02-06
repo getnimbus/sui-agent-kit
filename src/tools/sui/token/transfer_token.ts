@@ -104,8 +104,8 @@ export async function transfer_token(
       tx_hash: txExec.digest,
       tx_status: res.effects?.status.status || "unknown",
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
-    throw new Error("Failed to transfer token");
+    throw new Error(`Failed to transfer token: ${error.message}`);
   }
 }

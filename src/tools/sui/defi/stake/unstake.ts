@@ -1,17 +1,17 @@
-import { StakedSui, SuiAgentKit, TransactionResponse } from "../../../../index";
+import { SuiAgentKit, TransactionResponse } from "../../../../index";
 import { Transaction } from "@mysten/sui/transactions";
 import logger from "../../../../utils/logger";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 /**
  * Stake SUI
  * @param agent - SuiAgentKit instance
- * @param stakedSui - The staked SUI object
+ * @param stakedSuiId - The staked SUI object id
  * @returns Promise resolving to the transaction hash
  */
 
 export async function unstake(
   agent: SuiAgentKit,
-  stakedSui: StakedSui,
+  stakedSuiId: string,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -26,7 +26,7 @@ export async function unstake(
       target: "0x3::sui_system::request_withdraw_stake",
       arguments: [
         txb.object(SUI_SYSTEM_STATE_OBJECT_ID),
-        txb.object(stakedSui.id),
+        txb.object(stakedSuiId),
       ],
     });
 
@@ -47,8 +47,8 @@ export async function unstake(
       tx_hash: txExec.digest,
       tx_status: res.effects?.status.status || "unknown",
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
-    throw new Error("Failed to stake");
+    throw new Error(`Failed to unstake: ${error.message}`);
   }
 }

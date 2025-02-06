@@ -14,8 +14,8 @@ export class SuiStakeTool extends Tool {
   }
 
   async _call(input: string): Promise<string> {
-    const parsedInput = JSON.parse(input);
     try {
+      const parsedInput = JSON.parse(input);
       const result = await this.suiKit.stake(
         parsedInput.amount,
         parsedInput.poolId,
@@ -24,8 +24,12 @@ export class SuiStakeTool extends Tool {
         status: "success",
         ...result,
       });
-    } catch (error) {
-      throw new Error("Failed to stake SUI");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

@@ -11,12 +11,17 @@ export class SuiGetHoldingTool extends Tool {
 
   async _call(_input: string): Promise<string> {
     try {
+      const assets = await this.suiKit.getHoldings();
       return JSON.stringify({
         status: "success",
-        assets: await this.suiKit.getHoldings(),
+        assets,
       });
-    } catch (error) {
-      throw new Error("Failed to get holdings");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }

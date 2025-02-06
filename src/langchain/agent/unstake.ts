@@ -6,24 +6,16 @@ export class SuiUnstakeTool extends Tool {
   description = `Unstake SUI tokens from a validator pool.
 
   Inputs (input is a JSON string):
-  id: string - The ID of the staked SUI object to unstake
-  stake_object_id: string - The ID of staked object
-  stake_activation_epoch: number - The epoch at which the stake was activated
-  principal: string - The amount of SUI to unstake`;
+  stakedSuiId: string - The ID of the staked SUI object to unstake`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
   }
 
   async _call(input: string): Promise<string> {
-    const parsedInput = JSON.parse(input);
     try {
-      const result = await this.suiKit.unstake({
-        id: parsedInput.id,
-        stake_object_id: parsedInput.stake_object_id,
-        stake_activation_epoch: parsedInput.stake_activation_epoch,
-        principal: parsedInput.principal,
-      });
+      const parsedInput = JSON.parse(input);
+      const result = await this.suiKit.unstake(parsedInput.stakedSuiId);
       return JSON.stringify({
         status: "success",
         result: {
@@ -31,8 +23,12 @@ export class SuiUnstakeTool extends Tool {
           tx_status: result.tx_status,
         },
       });
-    } catch (error) {
-      throw new Error("Failed to unstake SUI");
+    } catch (error: any) {
+      return JSON.stringify({
+        status: "error",
+        message: error.message,
+        code: error.code || "UNKNOWN_ERROR",
+      });
     }
   }
 }
