@@ -1,5 +1,6 @@
 import { SuiAgentKit } from "../agent";
 import { z } from "zod";
+import { NameRecord } from "@mysten/suins/dist/cjs/types";
 
 export interface Config {
   BASE_URL?: string;
@@ -261,4 +262,8 @@ export interface ISwapParams {
   toToken: string;
   inputAmount: number;
   slippage: number | undefined;
+}
+
+export interface NameRecordX extends NameRecord {
+  humanReadableExpirationTimestampMs: string;
 }

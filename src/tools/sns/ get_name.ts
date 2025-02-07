@@ -1,7 +1,8 @@
 import { SuinsClient } from "@mysten/suins";
 import { SuiAgentKit } from "../../index";
-import { NameRecord } from "@mysten/suins/dist/cjs/types";
+import { NameRecordX } from "../../types";
 import logger from "../../utils/logger";
+import dayjs from "dayjs";
 
 /**
  * Get the NameRecord object for a given domain name
@@ -12,7 +13,7 @@ import logger from "../../utils/logger";
 export async function get_name_record(
   agent: SuiAgentKit,
   name: string,
-): Promise<NameRecord | null> {
+): Promise<NameRecordX | null> {
   try {
     const suinsClient = new SuinsClient({
       client: agent.client as any,
@@ -27,8 +28,18 @@ export async function get_name_record(
 
     // Create a transaction block as usual in your PTBs.
     const nameRecord = await suinsClient.getNameRecord(name);
+    if (!nameRecord) {
+      return null;
+    }
 
-    return nameRecord;
+    const humanReadableExpirationTimestampMs = dayjs(
+      Number(nameRecord.expirationTimestampMs),
+    ).format("YYYY-MM-DD"); // Format to match expected output
+
+    return {
+      ...nameRecord,
+      humanReadableExpirationTimestampMs,
+    };
   } catch (error: any) {
     logger.error(error);
     throw error;

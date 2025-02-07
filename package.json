@@ -37,6 +37,7 @@
     "axios": "^1.7.9",
     "bignumber.js": "^9.1.2",
     "bn.js": "^5.2.1",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "langchain": "^0.3.8",
     "openai": "^4.77.0",
