@@ -8,3 +8,5 @@ export * from "./unstake";
 export * from "./get_stake";
 export * from "./create_pool_cetus_clmm";
 export * from "./transfer_token";
+export * from "./register_sns";
+export * from "./get_sns_name_record";

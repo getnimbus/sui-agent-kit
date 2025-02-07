@@ -12,6 +12,8 @@ import {
   SuiUnstakeTool,
   SuiCreatePoolCetusCLMMTool,
   SuiSwapTool,
+  SuiRegisterSnsTool,
+  SuiGetSnsNameRecordTool,
 } from "./agent";
 
 export function createSuiTools(suiKit: SuiAgentKit) {
@@ -26,5 +28,7 @@ export function createSuiTools(suiKit: SuiAgentKit) {
     new SuiUnstakeTool(suiKit),
     new SuiCreatePoolCetusCLMMTool(suiKit),
     new SuiSwapTool(suiKit),
+    new SuiRegisterSnsTool(suiKit),
+    new SuiGetSnsNameRecordTool(suiKit),
   ];
 }

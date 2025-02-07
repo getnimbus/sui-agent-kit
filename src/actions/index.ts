@@ -8,6 +8,8 @@ import unstake from "./agent/unstake";
 import getStake from "./agent/getStake";
 import createPoolCetusCLMM from "./agent/createPoolCetusCLMM";
 import swapToken from "./agent/swap";
+import registerSns from "./agent/registerSns";
+import getSnsNameRecord from "./agent/getSnsNameRecord";
 
 export const ACTIONS = {
   CREATE_IMAGE_ACTION: createImageAction,
@@ -20,6 +22,8 @@ export const ACTIONS = {
   GET_STAKE: getStake,
   CREATE_POOL_CETUS_CLMM: createPoolCetusCLMM,
   SWAP_TOKEN: swapToken,
+  REGISTER_SNS: registerSns,
+  GET_SNS_NAME_RECORD: getSnsNameRecord,
 };
 
 export type { Action, ActionExample, Handler } from "../types/action";
