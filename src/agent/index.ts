@@ -1,4 +1,4 @@
-import { DelegatedStake, SuiClient } from "@mysten/sui/client";
+import { DelegatedStake, getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { create_pool_cetus_CLMM, get_holding, swap } from "../tools";
 import {
@@ -9,12 +9,17 @@ import {
   TransactionResponse,
   TransferTokenResponse,
 } from "../types";
-import { transfer_token } from "../tools/sui/token/transfer_token";
+
+import { NameRecord } from "@mysten/suins/dist/cjs/types";
 import { ICreateTokenForm } from "../utils/move-template/coin";
+
+import { transfer_token } from "../tools/sui/token/transfer_token";
 import { deploy_token } from "../tools/sui/token/deploy_token";
 import { stake } from "../tools/sui/defi/stake/stake";
 import { get_stake } from "../tools/sui/defi/stake/get_stake";
 import { unstake } from "../tools/sui/defi/stake/unstake";
+import { register_sns } from "../tools/sns/register";
+import { get_name_record } from "../tools/sns/ get_name";
 
 /**
  * Main class for interacting with Sui blockchain
@@ -52,7 +57,7 @@ export class SuiAgentKit {
     configOrKey: Config | string | null,
   ) {
     this.client = new SuiClient({
-      url: rpc_url || "https://fullnode.mainnet.sui.io:443",
+      url: getFullnodeUrl("mainnet"),
     });
     this.wallet = Ed25519Keypair.fromSecretKey(private_key);
     this.wallet_address = this.wallet.getPublicKey().toSuiAddress();
@@ -110,5 +115,17 @@ export class SuiAgentKit {
 
   async swap(params: ISwapParams): Promise<TransactionResponse> {
     return swap(this, params);
+  }
+
+  async registerSns(
+    name: string,
+    years: number,
+    payToken: "SUI" | "USDC" | "USDT",
+  ): Promise<TransactionResponse> {
+    return register_sns(this, name, years, payToken);
+  }
+
+  async getSnsNameRecord(name: string): Promise<NameRecord | null> {
+    return get_name_record(this, name);
   }
 }

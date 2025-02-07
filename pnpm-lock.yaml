@@ -16,7 +16,7 @@ importers:
         version: 1.0.11(zod@3.24.1)
       '@cetusprotocol/cetus-sui-clmm-sdk':
         specifier: ^5.2.0
-        version: 5.2.0(@mysten/bcs@1.2.1)(@mysten/sui@1.19.0(typescript@5.7.2))
+        version: 5.2.0(@mysten/bcs@1.3.0)(@mysten/sui@1.19.0(typescript@5.7.2))
       '@langchain/core':
         specifier: ^0.3.26
         version: 0.3.26(openai@4.77.0(zod@3.24.1))
@@ -35,6 +35,9 @@ importers:
       '@mysten/sui':
         specifier: ^1.19.0
         version: 1.19.0(typescript@5.7.2)
+      '@mysten/suins':
+        specifier: ^0.6.3
+        version: 0.6.3(typescript@5.7.2)
       ai:
         specifier: ^4.0.22
         version: 4.0.26(react@19.0.0)(zod@3.24.1)
@@ -174,6 +177,10 @@ packages:
     peerDependenciesMeta:
       zod:
         optional: true
+
+  '@babel/runtime@7.26.7':
+    resolution: {integrity: sha512-AOPI3D+a8dXnja+iwsUqGRjr1BbZIe771sXdapOtYI531gSqpi92vXivKcq2asu/DFpdl1ceFAKZyRzK2PCVcQ==}
+    engines: {node: '>=6.9.0'}
 
   '@cetusprotocol/cetus-sui-clmm-sdk@5.2.0':
     resolution: {integrity: sha512-bczBNp/Kydz5N2imw4zztqLUMIZrmOtSladb8W1ltxAo2RbIvKUpgLkaDOFkaZwXV1nsP4LXTmE6VlyUV5tKIQ==}
@@ -439,9 +446,24 @@ packages:
   '@mysten/bcs@1.2.1':
     resolution: {integrity: sha512-RMSaUsNb8oR0rTRVIOOcyoEVJqQi6DLvMXN+7mvDcki12FJFQ0lF89zQa7AV7cIurWlDQfJ8VIbCuRDyK+955A==}
 
+  '@mysten/bcs@1.3.0':
+    resolution: {integrity: sha512-V3V9GwIXEiUS7y8hkCwH3oseWpxs75YOOtfy7xdfyAdSftlFpTYgj5elclwYx8pgHdzg7pHdy6no77LHYGQCaQ==}
+
+  '@mysten/sui@1.18.1':
+    resolution: {integrity: sha512-ccMVOHM4KQhUvbBirE1rkn9THDJUX7y7W1cDMoCKnlPsIwTtQifZc7ysyBNjCMAS42y8Kq4VpiRagPjf13Am5A==}
+    engines: {node: '>=18'}
+
   '@mysten/sui@1.19.0':
     resolution: {integrity: sha512-hjNCArz7upZaGZNNmMeQRKSlQK73eN+p8MlKJvlZpx/6gorK0WWFWWjEcIyJndkIDbLb06nbQbWIWZ8KoI036Q==}
     engines: {node: '>=18'}
+
+  '@mysten/sui@1.21.1':
+    resolution: {integrity: sha512-HVrcqiUUSPToxbQtEgARFCnLr6FMkDHhhwWdy/urk8dqr8jnNZkU3Ppr6YUgg3vRE3sXPhuIjXOCEL6Wyq6Esw==}
+    engines: {node: '>=18'}
+
+  '@mysten/suins@0.6.3':
+    resolution: {integrity: sha512-qCd0RTnLCBLLwZV5OVUCKDYIiaVQGn6JsXcJLt2BI0GL9t2K+5VyaXL6BNfxVisEXQ3OxRBS7J+pVwrY/laAZg==}
+    engines: {node: '>=16'}
 
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
@@ -481,6 +503,16 @@ packages:
   '@pkgr/core@0.1.1':
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
+
+  '@pythnetwork/price-service-client@1.9.0':
+    resolution: {integrity: sha512-SLm3IFcfmy9iMqHeT4Ih6qMNZhJEefY14T9yTlpsH2D/FE5+BaGGnfcexUifVlfH6M7mwRC4hEFdNvZ6ebZjJg==}
+    deprecated: This package is deprecated and is no longer maintained. Please use @pythnetwork/hermes-client instead.
+
+  '@pythnetwork/price-service-sdk@1.8.0':
+    resolution: {integrity: sha512-tFZ1thj3Zja06DzPIX2dEWSi7kIfIyqreoywvw5NQ3Z1pl5OJHQGMEhxt6Li3UCGSp2ooYZS9wl8/8XfrfrNSA==}
+
+  '@pythnetwork/pyth-sui-js@2.1.0':
+    resolution: {integrity: sha512-oSfpqtLATTEVaac/YbaRQBvOI7DM+Qds5O0GJjEcky7UQRtz/tlU9tjQ6VRn3vm8IXw8P1mKzJcaTIO134X9Sw==}
 
   '@scure/base@1.1.9':
     resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
@@ -545,6 +577,9 @@ packages:
 
   '@types/uuid@10.0.0':
     resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
+
+  '@types/ws@8.5.14':
+    resolution: {integrity: sha512-bd/YFLW+URhBzMXurx7lWByOu+xzU9+kb3RboOteXYDfW+tr+JZa99OyNmPINEGB/ahzKrEuc8rcv4gnpJmxTw==}
 
   '@typescript-eslint/eslint-plugin@8.19.0':
     resolution: {integrity: sha512-NggSaEZCdSrFddbctrVjkVZvFC6KGfKfNK0CU7mNK/iKHGKbzT4Wmgm08dKpcZECBu9f5FypndoMyRHkdqfT1Q==}
@@ -663,6 +698,9 @@ packages:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
 
+  axios-retry@3.9.1:
+    resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
+
   axios@1.7.9:
     resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
 
@@ -696,6 +734,9 @@ packages:
 
   bs58@6.0.0:
     resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==}
+
+  buffer@6.0.3:
+    resolution: {integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==}
 
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -1042,6 +1083,9 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  ieee754@1.2.1:
+    resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
+
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
@@ -1089,6 +1133,10 @@ packages:
     resolution: {integrity: sha512-Fd4gABb+ycGAmKou8eMftCupSir5lRxqf4aD/vd0cD2qc4HL07OjCeuHMr8Ro4CoMaeCKDB0/ECBOVWjTwUvPQ==}
     engines: {node: '>=8'}
 
+  is-retry-allowed@2.2.0:
+    resolution: {integrity: sha512-XVm7LOeLpTW4jV19QSH38vkswxoLud8sQ57YwJVTPWdiaI9I8keEhGFpBlslyVsgdQy4Opg8QOLb8YRgsyZiQg==}
+    engines: {node: '>=10'}
+
   is-stream@3.0.0:
     resolution: {integrity: sha512-LnQR4bZ9IADDRSkvpqMGvt/tEJWclzklNgSw48V5EAaAeDd6qGvN8ei6k5p0tvxSR171VmGyHuTiAOfxAbr8kA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -1104,6 +1152,11 @@ packages:
 
   isomorphic-fetch@3.0.0:
     resolution: {integrity: sha512-qvUtwJ3j6qwsF3jLxkZ72qCgjMysPzDfeV240JHiGZsANBYd+EEuu35v7dfrJ9Up0Ak07D7GGSkGhCHTqg/5wA==}
+
+  isomorphic-ws@4.0.1:
+    resolution: {integrity: sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==}
+    peerDependencies:
+      ws: '*'
 
   jose@5.9.6:
     resolution: {integrity: sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ==}
@@ -1468,6 +1521,9 @@ packages:
     resolution: {integrity: sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg==}
     engines: {node: '>= 12.13.0'}
 
+  regenerator-runtime@0.14.1:
+    resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
+
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -1636,6 +1692,9 @@ packages:
     peerDependencies:
       typescript: '>=4.2.0'
 
+  ts-log@2.2.7:
+    resolution: {integrity: sha512-320x5Ggei84AxzlXp91QkIGSw5wgaLT6GeAH0KsqDmRZdVWW2OiSeVvElVoatk3f7nicwXlElXsoFkARiGE2yg==}
+
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -1743,6 +1802,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.18.0:
+    resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
@@ -1831,9 +1902,13 @@ snapshots:
     optionalDependencies:
       zod: 3.24.1
 
-  '@cetusprotocol/cetus-sui-clmm-sdk@5.2.0(@mysten/bcs@1.2.1)(@mysten/sui@1.19.0(typescript@5.7.2))':
+  '@babel/runtime@7.26.7':
     dependencies:
-      '@mysten/bcs': 1.2.1
+      regenerator-runtime: 0.14.1
+
+  '@cetusprotocol/cetus-sui-clmm-sdk@5.2.0(@mysten/bcs@1.3.0)(@mysten/sui@1.19.0(typescript@5.7.2))':
+    dependencies:
+      '@mysten/bcs': 1.3.0
       '@mysten/sui': 1.19.0(typescript@5.7.2)
       '@suchipi/femver': 1.0.0
       '@syntsugar/cc-graph': 0.1.1
@@ -2069,6 +2144,31 @@ snapshots:
     dependencies:
       bs58: 6.0.0
 
+  '@mysten/bcs@1.3.0':
+    dependencies:
+      bs58: 6.0.0
+
+  '@mysten/sui@1.18.1(typescript@5.7.2)':
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
+      '@mysten/bcs': 1.2.1
+      '@noble/curves': 1.7.0
+      '@noble/hashes': 1.6.1
+      '@scure/bip32': 1.4.0
+      '@scure/bip39': 1.3.0
+      '@simplewebauthn/typescript-types': 7.4.0
+      '@suchipi/femver': 1.0.0
+      bech32: 2.0.0
+      gql.tada: 1.8.10(graphql@16.10.0)(typescript@5.7.2)
+      graphql: 16.10.0
+      jose: 5.9.6
+      poseidon-lite: 0.2.1
+      valibot: 0.36.0
+    transitivePeerDependencies:
+      - '@gql.tada/svelte-support'
+      - '@gql.tada/vue-support'
+      - typescript
+
   '@mysten/sui@1.19.0(typescript@5.7.2)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
@@ -2089,6 +2189,38 @@ snapshots:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
       - typescript
+
+  '@mysten/sui@1.21.1(typescript@5.7.2)':
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
+      '@mysten/bcs': 1.3.0
+      '@noble/curves': 1.7.0
+      '@noble/hashes': 1.6.1
+      '@scure/bip32': 1.4.0
+      '@scure/bip39': 1.3.0
+      '@suchipi/femver': 1.0.0
+      bech32: 2.0.0
+      gql.tada: 1.8.10(graphql@16.10.0)(typescript@5.7.2)
+      graphql: 16.10.0
+      jose: 5.9.6
+      poseidon-lite: 0.2.1
+      valibot: 0.36.0
+    transitivePeerDependencies:
+      - '@gql.tada/svelte-support'
+      - '@gql.tada/vue-support'
+      - typescript
+
+  '@mysten/suins@0.6.3(typescript@5.7.2)':
+    dependencies:
+      '@mysten/sui': 1.18.1(typescript@5.7.2)
+      '@pythnetwork/pyth-sui-js': 2.1.0(typescript@5.7.2)
+    transitivePeerDependencies:
+      - '@gql.tada/svelte-support'
+      - '@gql.tada/vue-support'
+      - bufferutil
+      - debug
+      - typescript
+      - utf-8-validate
 
   '@noble/curves@1.4.2':
     dependencies:
@@ -2119,6 +2251,37 @@ snapshots:
   '@opentelemetry/api@1.9.0': {}
 
   '@pkgr/core@0.1.1': {}
+
+  '@pythnetwork/price-service-client@1.9.0':
+    dependencies:
+      '@pythnetwork/price-service-sdk': 1.8.0
+      '@types/ws': 8.5.14
+      axios: 1.7.9
+      axios-retry: 3.9.1
+      isomorphic-ws: 4.0.1(ws@8.18.0)
+      ts-log: 2.2.7
+      ws: 8.18.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
+  '@pythnetwork/price-service-sdk@1.8.0':
+    dependencies:
+      bn.js: 5.2.1
+
+  '@pythnetwork/pyth-sui-js@2.1.0(typescript@5.7.2)':
+    dependencies:
+      '@mysten/sui': 1.21.1(typescript@5.7.2)
+      '@pythnetwork/price-service-client': 1.9.0
+      buffer: 6.0.3
+    transitivePeerDependencies:
+      - '@gql.tada/svelte-support'
+      - '@gql.tada/vue-support'
+      - bufferutil
+      - debug
+      - typescript
+      - utf-8-validate
 
   '@scure/base@1.1.9': {}
 
@@ -2190,6 +2353,10 @@ snapshots:
   '@types/unist@3.0.3': {}
 
   '@types/uuid@10.0.0': {}
+
+  '@types/ws@8.5.14':
+    dependencies:
+      '@types/node': 22.10.5
 
   '@typescript-eslint/eslint-plugin@8.19.0(@typescript-eslint/parser@8.19.0(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1)(typescript@5.7.2)':
     dependencies:
@@ -2326,6 +2493,11 @@ snapshots:
 
   atomic-sleep@1.0.0: {}
 
+  axios-retry@3.9.1:
+    dependencies:
+      '@babel/runtime': 7.26.7
+      is-retry-allowed: 2.2.0
+
   axios@1.7.9:
     dependencies:
       follow-redirects: 1.15.9
@@ -2362,6 +2534,11 @@ snapshots:
   bs58@6.0.0:
     dependencies:
       base-x: 5.0.0
+
+  buffer@6.0.3:
+    dependencies:
+      base64-js: 1.5.1
+      ieee754: 1.2.1
 
   callsites@3.1.0: {}
 
@@ -2729,6 +2906,8 @@ snapshots:
 
   husky@9.1.7: {}
 
+  ieee754@1.2.1: {}
+
   ignore@5.3.2: {}
 
   import-fresh@3.3.0:
@@ -2763,6 +2942,8 @@ snapshots:
 
   is-path-inside@3.0.3: {}
 
+  is-retry-allowed@2.2.0: {}
+
   is-stream@3.0.0: {}
 
   isarray@0.0.1: {}
@@ -2777,6 +2958,10 @@ snapshots:
       whatwg-fetch: 3.6.20
     transitivePeerDependencies:
       - encoding
+
+  isomorphic-ws@4.0.1(ws@8.18.0):
+    dependencies:
+      ws: 8.18.0
 
   jose@5.9.6: {}
 
@@ -3105,6 +3290,8 @@ snapshots:
 
   real-require@0.2.0: {}
 
+  regenerator-runtime@0.14.1: {}
+
   require-directory@2.1.1: {}
 
   resolve-from@4.0.0: {}
@@ -3252,6 +3439,8 @@ snapshots:
     dependencies:
       typescript: 5.7.2
 
+  ts-log@2.2.7: {}
+
   tslib@2.8.1: {}
 
   tsx@4.19.2:
@@ -3338,6 +3527,8 @@ snapshots:
       strip-ansi: 7.1.0
 
   wrappy@1.0.2: {}
+
+  ws@8.18.0: {}
 
   xtend@4.0.2: {}
 
