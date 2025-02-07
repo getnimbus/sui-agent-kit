@@ -19,6 +19,8 @@ export async function get_name_record(
       network: "mainnet",
     });
 
+    // Modify name following suins
+    name = name.toLowerCase();
     if (!name.endsWith(".sui")) {
       name = name + ".sui";
     }

@@ -7,8 +7,8 @@ export class SuiRegisterSnsTool extends Tool {
 
   Inputs (input is a JSON string):
   name: string - The domain name to register (without .sui suffix)
-  years: number - Number of years to register for
-  payToken: string - Token symbol to pay with (e.g., "SUI")`;
+  years: integer - Number of years to register for
+  payToken: string - Token symbol to pay with ("SUI", "USDC", "USDT")`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();

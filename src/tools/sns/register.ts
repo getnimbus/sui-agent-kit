@@ -9,14 +9,14 @@ import logger from "../../utils/logger";
  * @param agent - SuiAgentKit instance
  * @param name - The domain name to register (without .sui suffix)
  * @param years - Number of years to register for
- * @param payToken - Token symbol to pay with (e.g., "SUI")
+ * @param payToken - Token symbol to pay with ("SUI", "USDC", "USDT")
  * @returns Promise resolving to the transaction response
  */
 export async function register_sns(
   agent: SuiAgentKit,
   name: string,
   years: number,
-  payToken: string,
+  payToken: "SUI" | "USDC" | "USDT",
 ): Promise<TransactionResponse> {
   try {
     const suinsClient = new SuinsClient({
@@ -26,6 +26,9 @@ export async function register_sns(
 
     const tx = new Transaction();
 
+    if (!["SUI", "USDC", "USDT"].includes(payToken)) {
+      throw new Error("Invalid payToken");
+    }
     const coinConfig = suinsClient.config.coins[payToken]; // Specify the coin type used for the transaction
 
     const priceInfoObjectId =
@@ -59,15 +62,6 @@ export async function register_sns(
     suinsTx.transaction.transferObjects([nft], agent.wallet_address);
 
     tx.setSender(agent.wallet_address);
-
-    // For test only
-    // tx.setGasBudget(10 * 10 ** 9);
-
-    // const res = await agent.client.dryRunTransactionBlock({
-    //   transactionBlock: await tx.build({
-    //     client: agent.client,
-    //   }),
-    // });
 
     // execute the transaction
     const txExec = await agent.client.signAndExecuteTransaction({

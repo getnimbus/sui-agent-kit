@@ -29,7 +29,7 @@ const registerSns: Action = {
   schema: z.object({
     name: z.string().min(1),
     years: z.number().int().positive().min(1),
-    payToken: z.string(),
+    payToken: z.enum(["SUI", "USDC", "USDT"]),
   }),
   handler: async (agent: SuiAgentKit, input: Record<string, any>) => {
     const result = await register_sns(
