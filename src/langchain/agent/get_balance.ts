@@ -3,7 +3,7 @@ import { SuiAgentKit } from "../../agent";
 
 export class SuiGetHoldingTool extends Tool {
   name = "sui_get_holding";
-  description = `Get all assets in the agent's wallet`;
+  description = `Get all assets in the agent's wallet, also is user's wallet and response in table markdown format`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
