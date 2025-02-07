@@ -5,12 +5,12 @@ import { MIST_PER_SUI } from "@mysten/sui/utils";
 import logger from "../../utils/logger";
 
 /**
- * Get the holdings asset of SUI token for the agent's wallet
+ * Register a Sui Name Service (SNS) domain
  * @param agent - SuiAgentKit instance
  * @param name - The domain name to register (without .sui suffix)
  * @param years - Number of years to register for
  * @param payToken - Token symbol to pay with (e.g., "SUI")
- * @returns Promise resolving to the holdings as array of TokenBalance or null if account doesn't exist
+ * @returns Promise resolving to the transaction response
  */
 export async function register_sns(
   agent: SuiAgentKit,

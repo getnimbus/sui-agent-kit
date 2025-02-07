@@ -4,10 +4,10 @@ import { NameRecord } from "@mysten/suins/dist/cjs/types";
 import logger from "../../utils/logger";
 
 /**
- * Get the holdings asset of SUI token for the agent's wallet
+ * Get the NameRecord object for a given domain name
  * @param agent - SuiAgentKit instance
  * @param name - The domain name to look up
- * @returns Promise resolving to the holdings as array of TokenBalance or null if account doesn't exist
+ * @returns Promise resolving to the NameRecord object for the domain or null if not found
  */
 export async function get_name_record(
   agent: SuiAgentKit,
