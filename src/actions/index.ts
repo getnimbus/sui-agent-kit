@@ -1,4 +1,4 @@
-import createImageAction from "./agent/createImage";
+// import createImageAction from "./agent/createImage";
 import deployToken from "./agent/deployToken";
 import getWalletHolding from "./agent/getWalletHolding";
 import transferToken from "./agent/transferToken";
@@ -12,7 +12,7 @@ import registerSns from "./agent/registerSns";
 import getSnsNameRecord from "./agent/getSnsNameRecord";
 
 export const ACTIONS = {
-  CREATE_IMAGE_ACTION: createImageAction,
+  // CREATE_IMAGE_ACTION: createImageAction,
   GET_WALLET_HOLDING: getWalletHolding,
   TRANSFER_TOKEN: transferToken,
   DEPLOY_TOKEN: deployToken,

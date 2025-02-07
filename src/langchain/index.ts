@@ -2,8 +2,8 @@ export * from "./agent";
 
 import { SuiAgentKit } from "../agent";
 import {
+  // SuiCreateImageTool,
   SuiGetWalletAddressTool,
-  SuiCreateImageTool,
   SuiGetHoldingTool,
   SuiTransferTokenTool,
   SuiDeployTokenTool,
@@ -18,8 +18,8 @@ import {
 
 export function createSuiTools(suiKit: SuiAgentKit) {
   return [
+    // new SuiCreateImageTool(suiKit),
     new SuiGetWalletAddressTool(suiKit),
-    new SuiCreateImageTool(suiKit),
     new SuiGetHoldingTool(suiKit),
     new SuiTransferTokenTool(suiKit),
     new SuiDeployTokenTool(suiKit),
