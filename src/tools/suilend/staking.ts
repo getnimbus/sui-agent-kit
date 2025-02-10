@@ -49,7 +49,6 @@ const getTransactionPayload = async (
   params: IStakingParams,
 ): Promise<Transaction> => {
   try {
-    const client = agent.client;
     const transaction = new Transaction();
 
     let amount = Number(params.amount);
