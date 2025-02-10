@@ -5,6 +5,7 @@ import { IStakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { listSUITokenSupportStakeSDKSuilend } from "./util";
 import { getSuilendSdkData } from "./util";
+import { get_holding } from "../sui/token/get_balance";
 /**
  * Stake SUI into Suilend
  * @param agent - SuiAgentKit instance
@@ -57,26 +58,7 @@ const getTransactionPayload = async (
     }
 
     // check balance
-    const balances = await client.getAllBalances({
-      owner: agent.wallet_address,
-    });
-    const balancesMetadata = await Promise.all(
-      balances.map(async (balance) => {
-        const metadata = await client.getCoinMetadata({
-          coinType: balance.coinType,
-        });
-        return {
-          address: balance.coinType,
-          name: metadata?.name || "",
-          symbol: metadata?.symbol || "",
-          decimals: metadata?.decimals || 0,
-          balance: (
-            Number(balance.totalBalance) /
-            10 ** (metadata?.decimals || 0)
-          ).toString(),
-        };
-      }),
-    );
+    const balancesMetadata = await get_holding(agent);
 
     const tokenData = balancesMetadata.find((r) => r.symbol === params.symbol);
 

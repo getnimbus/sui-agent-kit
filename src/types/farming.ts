@@ -24,7 +24,7 @@ export interface ILendingParams extends IBaseTransactionParams {
 export interface IBorrowParams extends IBaseTransactionParams {
   type: "BORROW";
   collateral: string;
-  amount: BigInt;
+  amount: number;
 }
 
 export interface IRepayParams extends IBaseTransactionParams {
