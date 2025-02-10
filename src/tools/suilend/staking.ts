@@ -234,58 +234,101 @@ const getTransactionPayload = async (
   agent: SuiAgentKit,
   params: IStakingParams,
 ): Promise<Transaction> => {
-  const transaction = new Transaction();
+  try {
+    const client = agent.client;
+    const transaction = new Transaction();
 
-  const amount = Number(params.amount);
-
-  if (amount <= 0) {
-    throw new Error("Amount must be greater than 0");
-  }
-
-  const appData: any = await getSuilendSdkData(agent);
-
-  const obligation = appData?.obligations?.[0];
-  const obligationOwnerCap = appData?.obligationOwnerCaps?.find(
-    (o: any) => o?.obligationId === obligation?.id,
-  );
-
-  const isNotEcosystemLTS = listSUITokenSupportStakeSDKSuilend.includes(
-    params.symbol,
-  );
-
-  if (isNotEcosystemLTS && params.tokenAddress) {
-    await appData?.suilendClient.depositIntoObligation(
-      params.sender,
-      params.tokenAddress,
-      amount as any,
-      transaction as any,
-      obligationOwnerCap?.id as string,
+    // check balance
+    const balances = await client.getAllBalances({
+      owner: agent.wallet_address,
+    });
+    const balancesMetadata = await Promise.all(
+      balances.map(async (balance) => {
+        const metadata = await client.getCoinMetadata({
+          coinType: balance.coinType,
+        });
+        return {
+          address: balance.coinType,
+          name: metadata?.name || "",
+          symbol: metadata?.symbol || "",
+          decimals: metadata?.decimals || 0,
+          balance: (
+            Number(balance.totalBalance) /
+            10 ** (metadata?.decimals || 0)
+          ).toString(),
+        };
+      }),
     );
-  } else {
-    const lstClient = appData?.lstClientMap[params.symbol];
-    const lstDataStaking = appData?.lstDataMap[params.symbol];
 
-    if (params.isStakeAndDeposit) {
-      const coinTypeStaking =
-        appData?.lendingMarket?.reserves.find(
-          (r: any) => r.symbol === params.symbol,
-        )?.coinType || lstDataStaking?.token?.coinType;
+    const tokenData = balancesMetadata.find((r) => r.symbol === params.symbol);
 
-      await appData?.suilendClient?.depositCoin(
-        params.sender as string,
-        lstClient.mintAndRebalance(transaction, amount),
-        coinTypeStaking,
+    if (!tokenData) {
+      throw new Error("Token not found");
+    }
+
+    let amount = Number(params.amount);
+
+    if (amount <= 0) {
+      throw new Error("Amount must be greater than 0");
+    }
+
+    if (tokenData.balance < amount.toString()) {
+      throw new Error("Insufficient balance");
+    }
+
+    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
+
+    const appData: any = await getSuilendSdkData(agent);
+
+    const obligation = appData?.obligations?.[0];
+    const obligationOwnerCap = appData?.obligationOwnerCaps?.find(
+      (o: any) => o?.obligationId === obligation?.id,
+    );
+
+    const isNotEcosystemLTS = listSUITokenSupportStakeSDKSuilend.includes(
+      params.symbol,
+    );
+
+    if (isNotEcosystemLTS && params.tokenAddress) {
+      await appData?.suilendClient.depositIntoObligation(
+        params.sender,
+        params.tokenAddress,
+        amount as any,
         transaction as any,
-        obligationOwnerCap?.id,
+        obligationOwnerCap?.id as string,
       );
     } else {
-      await lstClient.mintAndRebalanceAndSendToUser(
-        transaction,
-        params.sender as string,
-        amount,
-      );
-    }
-  }
+      const lstClient = appData?.lstClientMap[params.symbol];
+      if (!lstClient) {
+        throw new Error("This token is not supported for staking");
+      }
+      const lstDataStaking = appData?.lstDataMap[params.symbol];
 
-  return transaction;
+      if (params.isStakeAndDeposit) {
+        const coinTypeStaking =
+          appData?.lendingMarket?.reserves.find(
+            (r: any) => r.symbol === params.symbol,
+          )?.coinType || lstDataStaking?.token?.coinType;
+
+        await appData?.suilendClient?.depositCoin(
+          params.sender as string,
+          lstClient.mintAndRebalance(transaction, amount),
+          coinTypeStaking,
+          transaction as any,
+          obligationOwnerCap?.id,
+        );
+      } else {
+        await lstClient.mintAndRebalanceAndSendToUser(
+          transaction,
+          params.sender as string,
+          amount,
+        );
+      }
+    }
+
+    return transaction;
+  } catch (e) {
+    logger.error(e);
+    throw new Error(`Failed to get transaction payload: ${e}`);
+  }
 };

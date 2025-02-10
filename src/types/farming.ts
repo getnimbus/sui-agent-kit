@@ -54,7 +54,7 @@ export interface IRemoveLpParams extends IBaseTransactionParams {
 
 export interface IStakingParams extends IBaseTransactionParams {
   type: "STAKING";
-  amount: BigInt;
+  amount: number;
   symbol: string;
   isStakeAndDeposit?: boolean;
   tokenAddress?: string;
