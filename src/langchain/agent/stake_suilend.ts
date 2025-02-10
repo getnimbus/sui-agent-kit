@@ -22,8 +22,6 @@ export class SuiStakeSuilendTool extends Tool {
         type: "STAKING",
         amount: parsedInput.amount,
         symbol: parsedInput.symbol,
-        isStakeAndDeposit: parsedInput.isStakeAndDeposit,
-        poolId: "",
       };
 
       const result = await this.suiKit.stakeSuilend(params);

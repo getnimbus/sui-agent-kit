@@ -20,8 +20,16 @@ import { get_stake } from "../tools/sui/defi/stake/get_stake";
 import { unstake } from "../tools/sui/defi/stake/unstake";
 import { register_sns } from "../tools/sns/register";
 import { get_name_record } from "../tools/sns/ get_name";
-import { IStakingParams, IUnstakingParams } from "../types/farming";
-import { staking_suilend, unstaking_suilend } from "../tools/suilend";
+import {
+  ILendingParams,
+  IStakingParams,
+  IUnstakingParams,
+} from "../types/farming";
+import {
+  lending_suilend,
+  staking_suilend,
+  unstaking_suilend,
+} from "../tools/suilend";
 
 /**
  * Main class for interacting with Sui blockchain
@@ -137,6 +145,10 @@ export class SuiAgentKit {
 
   async unstakeSuilend(params: IUnstakingParams): Promise<TransactionResponse> {
     return unstaking_suilend(this, params);
+  }
+
+  async lendingSuilend(params: ILendingParams): Promise<TransactionResponse> {
+    return lending_suilend(this, params);
   }
 
   // async borrowSuilend(params: IBorrowParams): Promise<TransactionResponse> {

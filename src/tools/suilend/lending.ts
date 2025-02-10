@@ -1,20 +1,20 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
 
-import { IStakingParams } from "../../types/farming";
+import { ILendingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { listSUITokenSupportStakeSDKSuilend } from "./util";
 import { getSuilendSdkData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 /**
- * Stake SUI into Suilend
+ * Lending token into Suilend
  * @param agent - SuiAgentKit instance
- * @param params - IStakingParams
+ * @param params - ILendingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function staking_suilend(
+export async function lending_suilend(
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: ILendingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -40,13 +40,13 @@ export async function staking_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake SUI into Suilend: ${error.message}`);
+    throw new Error(`Failed to lending token into Suilend: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: ILendingParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();
@@ -93,15 +93,23 @@ const getTransactionPayload = async (
         obligationOwnerCap?.id as string,
       );
     } else {
-      const lstClient = appData?.lstClientMap[params.symbol];
+      const lstClient = appData?.lstClientMap[tokenData.symbol];
       if (!lstClient) {
         throw new Error("This token is not supported for staking");
       }
+      const lstDataStaking = appData?.lstDataMap[tokenData.symbol];
 
-      await lstClient.mintAndRebalanceAndSendToUser(
-        transaction,
+      const coinTypeStaking =
+        appData?.lendingMarket?.reserves.find(
+          (r: any) => r.symbol.toLowerCase() === tokenData.symbol,
+        )?.coinType || lstDataStaking?.token?.coinType;
+
+      await appData?.suilendClient?.depositCoin(
         agent.wallet_address,
-        amount,
+        lstClient.mintAndRebalance(transaction, amount),
+        coinTypeStaking,
+        transaction as any,
+        obligationOwnerCap?.id,
       );
     }
 

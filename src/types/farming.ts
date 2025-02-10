@@ -12,12 +12,11 @@ export type FARMING_TYPE =
 
 export interface IBaseTransactionParams {
   type: FARMING_TYPE;
-  poolId: string;
 }
 
 export interface ILendingParams extends IBaseTransactionParams {
   type: "LENDING";
-  amount: BigInt;
+  amount: number;
   symbol: string;
 }
 
@@ -55,8 +54,6 @@ export interface IStakingParams extends IBaseTransactionParams {
   type: "STAKING";
   amount: number;
   symbol: string;
-  isStakeAndDeposit?: boolean;
-  tokenAddress?: string;
 }
 
 export interface IUnstakingParams extends IBaseTransactionParams {

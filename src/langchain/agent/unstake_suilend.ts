@@ -21,7 +21,6 @@ export class SuiUnstakeSuilendTool extends Tool {
         type: "UNSTAKING",
         amount: parsedInput.amount,
         symbol: parsedInput.symbol,
-        poolId: "",
       };
 
       const result = await this.suiKit.unstakeSuilend(params);

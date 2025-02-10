@@ -35,7 +35,6 @@ const unstakeSuilend: Action = {
       type: "UNSTAKING",
       amount: input.amount,
       symbol: input.symbol,
-      poolId: "",
     };
 
     const result = await unstaking_suilend(agent, params);

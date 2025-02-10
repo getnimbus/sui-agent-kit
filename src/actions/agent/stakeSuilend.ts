@@ -14,7 +14,6 @@ const stakeSuilend: Action = {
         input: {
           amount: 1,
           symbol: "sSUI",
-          isStakeAndDeposit: true,
         },
         output: {
           status: "success",
@@ -30,15 +29,12 @@ const stakeSuilend: Action = {
   schema: z.object({
     amount: z.number().positive(),
     symbol: z.string(),
-    isStakeAndDeposit: z.boolean().optional(),
   }),
   handler: async (agent: SuiAgentKit, input: Record<string, any>) => {
     const params: IStakingParams = {
       type: "STAKING",
       amount: input.amount,
       symbol: input.symbol,
-      isStakeAndDeposit: input.isStakeAndDeposit,
-      poolId: "",
     };
 
     const result = await staking_suilend(agent, params);
