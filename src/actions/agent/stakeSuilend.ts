@@ -6,7 +6,7 @@ import { IStakingParams } from "../../types/farming";
 
 const stakeSuilend: Action = {
   name: "STAKE_SUILEND",
-  similes: ["stake suilend", "stake to suilend", "suilend stake"],
+  similes: ["stake suilend", "stake to suilend", "suilend stake", "stake LST"],
   description: "Stake tokens into Suilend protocol",
   examples: [
     [

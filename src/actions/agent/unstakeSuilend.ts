@@ -6,7 +6,12 @@ import { IUnstakingParams } from "../../types/farming";
 
 const unstakeSuilend: Action = {
   name: "UNSTAKE_SUILEND",
-  similes: ["unstake suilend", "unstake from suilend", "suilend unstake"],
+  similes: [
+    "unstake suilend",
+    "unstake from suilend",
+    "suilend unstake",
+    "unstake LST",
+  ],
   description: "Unstake tokens from Suilend protocol",
   examples: [
     [

@@ -6,7 +6,12 @@ import { ILendingParams } from "../../types/farming";
 
 const lendingSuilend: Action = {
   name: "LENDING_SUILEND",
-  similes: ["lending suilend", "lend to suilend", "suilend lend"],
+  similes: [
+    "lending suilend",
+    "lend to suilend",
+    "suilend lend",
+    "deposit to suilend",
+  ],
   description: "Lend tokens into Suilend protocol",
   examples: [
     [
