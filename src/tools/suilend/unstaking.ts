@@ -52,10 +52,12 @@ const getTransactionPayload = async (
     const transaction = new Transaction();
     let amount = Number(params.amount);
 
-    // check balance
+    // get metadata
     const balancesMetadata = await get_holding(agent);
 
-    const tokenData = balancesMetadata.find((r) => r.symbol === params.symbol);
+    const tokenData = balancesMetadata.find(
+      (r) => r.symbol.toLowerCase() === params.symbol.toLowerCase(),
+    );
 
     if (!tokenData) {
       throw new Error("Token not found in your wallet");
@@ -70,14 +72,14 @@ const getTransactionPayload = async (
       (o: any) => o?.obligationId === obligation?.id,
     );
 
-    const lstDataUnstacking = appData?.lstDataMap[params.symbol];
+    const lstDataUnstacking = appData?.lstDataMap[tokenData.symbol];
     if (!lstDataUnstacking) {
       throw new Error("This token is not supported for unstaking");
     }
 
     const coinTypeUnstaking =
       appData?.lendingMarket?.reserves.find(
-        (r: any) => r.symbol === params.symbol,
+        (r: any) => r.symbol === tokenData.symbol,
       )?.coinType || lstDataUnstacking?.token?.coinType;
 
     await appData?.suilendClient.withdrawAndSendToUser(
