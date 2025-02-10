@@ -7,7 +7,7 @@ export class SuiWithDrawSuilendTool extends Tool {
   description = `Withdraw tokens from Suilend protocol.
 
   Inputs (input is a JSON string):
-  amount: float - The amount of tokens to withdraw (required)
+  amount: number - The amount of tokens to withdraw, positive number, real number (required)
   symbol: string - The token symbol to withdraw (required, e.g., "sSUI")`;
 
   constructor(private suiKit: SuiAgentKit) {

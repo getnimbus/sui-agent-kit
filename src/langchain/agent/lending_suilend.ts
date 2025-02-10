@@ -7,7 +7,7 @@ export class SuiLendingSuilendTool extends Tool {
   description = `Lend tokens into Suilend protocol.
 
   Inputs (input is a JSON string):
-  amount: float - The amount of tokens to lend
+  amount: number - The amount of tokens to lend, positive number, real number (required)
   symbol: string - The token symbol to lend (required, e.g., "SUI", "USDC")`;
 
   constructor(private suiKit: SuiAgentKit) {

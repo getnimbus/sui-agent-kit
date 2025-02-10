@@ -7,7 +7,7 @@ export class SuiStakeSuilendTool extends Tool {
   description = `Stake tokens into Suilend protocol by SUI.
 
   Inputs (input is a JSON string):
-  amount: float - The amount of tokens to stake out (required, positive number)
+  amount: number - The amount of tokens to stake out, positive number, real number (required)
   symbol: string - The token symbol to stake out by SUI (required, e.g., "sSUI", "mSUI", "fudSUI", "kSUI", "trevinSUI", "upSUI")`;
 
   constructor(private suiKit: SuiAgentKit) {
