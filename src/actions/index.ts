@@ -11,7 +11,7 @@ import swapToken from "./agent/swap";
 import registerSns from "./agent/registerSns";
 import getSnsNameRecord from "./agent/getSnsNameRecord";
 import stakeSuilend from "./agent/stakeSuilend";
-
+import unstakeSuilend from "./agent/unstakeSuilend";
 export const ACTIONS = {
   // CREATE_IMAGE_ACTION: createImageAction,
   GET_WALLET_HOLDING: getWalletHolding,
@@ -26,6 +26,7 @@ export const ACTIONS = {
   REGISTER_SNS: registerSns,
   GET_SNS_NAME_RECORD: getSnsNameRecord,
   STAKE_SUILEND: stakeSuilend,
+  UNSTAKE_SUILEND: unstakeSuilend,
 };
 
 export type { Action, ActionExample, Handler } from "../types/action";
