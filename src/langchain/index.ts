@@ -16,6 +16,7 @@ import {
   SuiGetSnsNameRecordTool,
   SuiStakeSuilendTool,
   SuiUnstakeSuilendTool,
+  SuiLendingSuilendTool,
 } from "./agent";
 
 export function createSuiTools(suiKit: SuiAgentKit) {
@@ -34,5 +35,6 @@ export function createSuiTools(suiKit: SuiAgentKit) {
     new SuiGetSnsNameRecordTool(suiKit),
     new SuiStakeSuilendTool(suiKit),
     new SuiUnstakeSuilendTool(suiKit),
+    new SuiLendingSuilendTool(suiKit),
   ];
 }

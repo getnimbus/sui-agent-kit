@@ -12,3 +12,4 @@ export * from "./register_sns";
 export * from "./get_sns_name_record";
 export * from "./stake_suilend";
 export * from "./unstake_suilend";
+export * from "./lending_suilend";

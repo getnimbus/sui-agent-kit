@@ -12,6 +12,8 @@ import registerSns from "./agent/registerSns";
 import getSnsNameRecord from "./agent/getSnsNameRecord";
 import stakeSuilend from "./agent/stakeSuilend";
 import unstakeSuilend from "./agent/unstakeSuilend";
+import lendingSuilend from "./agent/lendingSuilend";
+
 export const ACTIONS = {
   // CREATE_IMAGE_ACTION: createImageAction,
   GET_WALLET_HOLDING: getWalletHolding,
@@ -27,6 +29,7 @@ export const ACTIONS = {
   GET_SNS_NAME_RECORD: getSnsNameRecord,
   STAKE_SUILEND: stakeSuilend,
   UNSTAKE_SUILEND: unstakeSuilend,
+  LENDING_SUILEND: lendingSuilend,
 };
 
 export type { Action, ActionExample, Handler } from "../types/action";

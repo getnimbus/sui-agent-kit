@@ -3,7 +3,10 @@ import logger from "../../utils/logger";
 
 import { IStakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
-import { listSUITokenSupportStakeSDKSuilend } from "./util";
+import {
+  listSpringSuiStaking,
+  listSUITokenSupportStakeSDKSuilend,
+} from "./util";
 import { getSuilendSdkData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 /**
@@ -56,54 +59,41 @@ const getTransactionPayload = async (
       throw new Error("Amount must be greater than 0");
     }
 
+    const tokenData = listSpringSuiStaking.find(
+      (r) => r.symbol.toLowerCase() === params.symbol.toLowerCase(),
+    );
+    if (!tokenData) {
+      throw new Error("This token is not supported for staking Suilend");
+    }
+
     // check balance
     const balancesMetadata = await get_holding(agent);
 
-    const tokenData = balancesMetadata.find(
-      (r) => r.symbol.toLowerCase() === params.symbol.toLowerCase(),
+    const nativeToken = balancesMetadata.find(
+      (r) => r.address === "0x2::sui::SUI",
     );
 
-    if (!tokenData) {
-      throw new Error("Token not found in your wallet");
+    if (
+      Number(nativeToken?.balance) <= 1 ||
+      Number(nativeToken?.balance) < amount
+    ) {
+      throw new Error("Insufficient SUI native balance");
     }
 
-    if (tokenData.balance < amount.toString()) {
-      throw new Error("Insufficient balance");
-    }
-
-    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
+    amount = Number(params.amount) * 10 ** 9;
 
     const appData: any = await getSuilendSdkData(agent);
 
-    const obligation = appData?.obligations?.[0];
-    const obligationOwnerCap = appData?.obligationOwnerCaps?.find(
-      (o: any) => o?.obligationId === obligation?.id,
-    );
-
-    const isNotEcosystemLTS = listSUITokenSupportStakeSDKSuilend.includes(
-      tokenData.symbol,
-    );
-
-    if (isNotEcosystemLTS) {
-      await appData?.suilendClient.depositIntoObligation(
-        agent.wallet_address,
-        tokenData.address,
-        amount as any,
-        transaction as any,
-        obligationOwnerCap?.id as string,
-      );
-    } else {
-      const lstClient = appData?.lstClientMap[params.symbol];
-      if (!lstClient) {
-        throw new Error("This token is not supported for staking");
-      }
-
-      await lstClient.mintAndRebalanceAndSendToUser(
-        transaction,
-        agent.wallet_address,
-        amount,
-      );
+    const lstClient = appData?.lstClientMap[tokenData.symbol];
+    if (!lstClient) {
+      throw new Error("This token is not supported for staking");
     }
+
+    await lstClient.mintAndRebalanceAndSendToUser(
+      transaction,
+      agent.wallet_address,
+      amount,
+    );
 
     return transaction;
   } catch (e) {

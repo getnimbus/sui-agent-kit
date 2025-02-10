@@ -14,6 +14,39 @@ export const listSUITokenSupportStakeSDKSuilend = [
   "BUCK",
 ];
 
+export const listSpringSuiStaking = [
+  {
+    symbol: "sSUI",
+    address:
+      "0x83556891f4a0f233ce7b05cfe7f957d4020492a34f5405b2cb9377d060bef4bf::spring_sui::SPRING_SUI",
+  },
+  {
+    symbol: "mSUI",
+    address:
+      "0x922d15d7f55c13fd790f6e54397470ec592caa2b508df292a2e8553f3d3b274f::msui::MSUI",
+  },
+  {
+    symbol: "fudSUI",
+    address:
+      "0x02358129a7d66f943786a10b518fdc79145f1fc8d23420d9948c4aeea190f603::fud_sui::FUD_SUI",
+  },
+  {
+    symbol: "kSUI",
+    address:
+      "0x41ff228bfd566f0c707173ee6413962a77e3929588d010250e4e76f0d1cc0ad4::ksui::KSUI",
+  },
+  {
+    symbol: "trevinSUI",
+    address:
+      "0x502867b177303bf1bf226245fcdd3403c177e78d175a55a56c0602c7ff51c7fa::trevin_sui::TREVIN_SUI",
+  },
+  {
+    symbol: "upSUI",
+    address:
+      "0xe68fad47384e18cd79040cb8d72b7f64d267eebb73a0b8d54711aa860570f404::upsui::UPSUI",
+  },
+];
+
 import {
   initializeSuilendSdk,
   initializeSuilendRewards,
