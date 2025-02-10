@@ -26,9 +26,10 @@ import { Transaction } from "@mysten/sui/transactions";
 import { listSUITokenSupportStakeSDKSuilend } from "./util";
 
 /**
- * Get the holdings asset of SUI token for the agent's wallet
+ * Stake SUI into Suilend
  * @param agent - SuiAgentKit instance
- * @returns Promise resolving to the holdings as array of DelegatedStake
+ * @param params - IStakingParams
+ * @returns Promise resolving to the transaction hash
  */
 export async function staking_suilend(
   agent: SuiAgentKit,
@@ -58,7 +59,7 @@ export async function staking_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to get stakes: ${error.message}`);
+    throw new Error(`Failed to stake SUI into Suilend: ${error.message}`);
   }
 }
 
@@ -238,6 +239,11 @@ const getTransactionPayload = async (
     const client = agent.client;
     const transaction = new Transaction();
 
+    let amount = Number(params.amount);
+    if (amount <= 0) {
+      throw new Error("Amount must be greater than 0");
+    }
+
     // check balance
     const balances = await client.getAllBalances({
       owner: agent.wallet_address,
@@ -263,13 +269,7 @@ const getTransactionPayload = async (
     const tokenData = balancesMetadata.find((r) => r.symbol === params.symbol);
 
     if (!tokenData) {
-      throw new Error("Token not found");
-    }
-
-    let amount = Number(params.amount);
-
-    if (amount <= 0) {
-      throw new Error("Amount must be greater than 0");
+      throw new Error("Token not found in your wallet");
     }
 
     if (tokenData.balance < amount.toString()) {
