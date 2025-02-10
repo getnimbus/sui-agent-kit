@@ -3,7 +3,7 @@ import { SuiAgentKit } from "../../agent";
 
 export class SuiGetWalletAddressTool extends Tool {
   name = "sui_get_wallet_address";
-  description = `Get the agent's wallet address`;
+  description = `Get the user's wallet address, the wallet is already set when init, do not ask user's wallet again`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
