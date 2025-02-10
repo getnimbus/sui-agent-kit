@@ -1,19 +1,19 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
 
-import { IStakingParams } from "../../types/farming";
+import { IUnstakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
-import { listSUITokenSupportStakeSDKSuilend } from "./util";
 import { getSuilendSdkData } from "./util";
+
 /**
- * Stake SUI into Suilend
+ * Unstake SUI from Suilend
  * @param agent - SuiAgentKit instance
- * @param params - IStakingParams
+ * @param params - IUnstakingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function staking_suilend(
+export async function unstaking_suilend(
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: IUnstakingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -45,16 +45,12 @@ export async function staking_suilend(
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: IUnstakingParams,
 ): Promise<Transaction> => {
   try {
     const client = agent.client;
     const transaction = new Transaction();
-
     let amount = Number(params.amount);
-    if (amount <= 0) {
-      throw new Error("Amount must be greater than 0");
-    }
 
     // check balance
     const balances = await client.getAllBalances({
@@ -84,10 +80,6 @@ const getTransactionPayload = async (
       throw new Error("Token not found in your wallet");
     }
 
-    if (tokenData.balance < amount.toString()) {
-      throw new Error("Insufficient balance");
-    }
-
     amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
     const appData: any = await getSuilendSdkData(agent);
@@ -97,46 +89,24 @@ const getTransactionPayload = async (
       (o: any) => o?.obligationId === obligation?.id,
     );
 
-    const isNotEcosystemLTS = listSUITokenSupportStakeSDKSuilend.includes(
-      params.symbol,
-    );
-
-    if (isNotEcosystemLTS && params.tokenAddress) {
-      await appData?.suilendClient.depositIntoObligation(
-        agent.wallet_address,
-        params.tokenAddress,
-        amount as any,
-        transaction as any,
-        obligationOwnerCap?.id as string,
-      );
-    } else {
-      const lstClient = appData?.lstClientMap[params.symbol];
-      if (!lstClient) {
-        throw new Error("This token is not supported for staking");
-      }
-      const lstDataStaking = appData?.lstDataMap[params.symbol];
-
-      if (params.isStakeAndDeposit) {
-        const coinTypeStaking =
-          appData?.lendingMarket?.reserves.find(
-            (r: any) => r.symbol === params.symbol,
-          )?.coinType || lstDataStaking?.token?.coinType;
-
-        await appData?.suilendClient?.depositCoin(
-          agent.wallet_address,
-          lstClient.mintAndRebalance(transaction, amount),
-          coinTypeStaking,
-          transaction as any,
-          obligationOwnerCap?.id,
-        );
-      } else {
-        await lstClient.mintAndRebalanceAndSendToUser(
-          transaction,
-          agent.wallet_address,
-          amount,
-        );
-      }
+    const lstDataUnstacking = appData?.lstDataMap[params.symbol];
+    if (!lstDataUnstacking) {
+      throw new Error("This token is not supported for unstaking");
     }
+
+    const coinTypeUnstaking =
+      appData?.lendingMarket?.reserves.find(
+        (r: any) => r.symbol === params.symbol,
+      )?.coinType || lstDataUnstacking?.token?.coinType;
+
+    await appData?.suilendClient.withdrawAndSendToUser(
+      agent.wallet_address,
+      obligationOwnerCap.id,
+      obligation.id,
+      coinTypeUnstaking,
+      amount,
+      transaction,
+    );
 
     return transaction;
   } catch (e) {
