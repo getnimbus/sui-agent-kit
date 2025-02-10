@@ -28,7 +28,7 @@ import {
 import {
   lending_suilend,
   staking_suilend,
-  unstaking_suilend,
+  withdraw_suilend,
 } from "../tools/suilend";
 
 /**
@@ -143,8 +143,10 @@ export class SuiAgentKit {
     return staking_suilend(this, params);
   }
 
-  async unstakeSuilend(params: IUnstakingParams): Promise<TransactionResponse> {
-    return unstaking_suilend(this, params);
+  async withdrawSuilend(
+    params: IUnstakingParams,
+  ): Promise<TransactionResponse> {
+    return withdraw_suilend(this, params);
   }
 
   async lendingSuilend(params: ILendingParams): Promise<TransactionResponse> {

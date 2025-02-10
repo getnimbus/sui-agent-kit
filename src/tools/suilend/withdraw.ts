@@ -7,12 +7,12 @@ import { getSuilendSdkData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 
 /**
- * Unstake SUI from Suilend
+ * Withdraw token from Suilend
  * @param agent - SuiAgentKit instance
  * @param params - IUnstakingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function unstaking_suilend(
+export async function withdraw_suilend(
   agent: SuiAgentKit,
   params: IUnstakingParams,
 ): Promise<TransactionResponse> {

@@ -11,7 +11,7 @@ import swapToken from "./agent/swap";
 import registerSns from "./agent/registerSns";
 import getSnsNameRecord from "./agent/getSnsNameRecord";
 import stakeSuilend from "./agent/stakeSuilend";
-import unstakeSuilend from "./agent/unstakeSuilend";
+import unstakeSuilend from "./agent/withdrawSuilend";
 import lendingSuilend from "./agent/lendingSuilend";
 
 export const ACTIONS = {

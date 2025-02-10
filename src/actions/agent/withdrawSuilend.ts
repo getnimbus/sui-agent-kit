@@ -1,16 +1,16 @@
 import { Action } from "../../types/action";
 import { SuiAgentKit } from "../../agent";
 import { z } from "zod";
-import { unstaking_suilend } from "../../tools/suilend";
+import { withdraw_suilend } from "../../tools/suilend";
 import { IUnstakingParams } from "../../types/farming";
 
 const unstakeSuilend: Action = {
-  name: "UNSTAKE_SUILEND",
+  name: "WITHDRAW_SUILEND",
   similes: [
-    "unstake suilend",
-    "unstake from suilend",
-    "suilend unstake",
-    "unstake LST",
+    "withdraw suilend",
+    "withdraw from suilend",
+    "suilend withdraw",
+    "withdraw LST",
   ],
   description: "Unstake tokens from Suilend protocol",
   examples: [
@@ -42,7 +42,7 @@ const unstakeSuilend: Action = {
       symbol: input.symbol,
     };
 
-    const result = await unstaking_suilend(agent, params);
+    const result = await withdraw_suilend(agent, params);
 
     return {
       status: "success",
