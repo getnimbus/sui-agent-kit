@@ -1,15 +1,14 @@
 import { Tool } from "langchain/tools";
 import { SuiAgentKit } from "../../agent";
-import { IStakingParams } from "../../types/farming";
+import { IUnstakingParams } from "../../types/farming";
 
-export class SuiStakeSuilendTool extends Tool {
-  name = "sui_stake_suilend";
-  description = `Stake tokens into Suilend protocol.
+export class SuiUnstakeSuilendTool extends Tool {
+  name = "sui_unstake_suilend";
+  description = `Unstake tokens from Suilend protocol.
 
   Inputs (input is a JSON string):
-  amount: number - The amount of tokens to stake (required, e.g 0.1, 0.01, 0.001, 1, ...)
-  symbol: string - The token symbol to stake (required, e.g., "sSUI")
-  isStakeAndDeposit: boolean - When user want to deposit, set to true (optional)`;
+  amount: real number - The amount of tokens to unstake (required, e.g 0.1, 0.01, 0.001, 1, ...)
+  symbol: string - The token symbol to unstake (required, e.g., "sSUI")`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
@@ -18,15 +17,14 @@ export class SuiStakeSuilendTool extends Tool {
   async _call(input: string): Promise<string> {
     try {
       const parsedInput = JSON.parse(input);
-      const params: IStakingParams = {
-        type: "STAKING",
+      const params: IUnstakingParams = {
+        type: "UNSTAKING",
         amount: parsedInput.amount,
         symbol: parsedInput.symbol,
-        isStakeAndDeposit: parsedInput.isStakeAndDeposit,
         poolId: "",
       };
 
-      const result = await this.suiKit.stakeSuilend(params);
+      const result = await this.suiKit.unstakeSuilend(params);
       return JSON.stringify({
         status: "success",
         result: {
