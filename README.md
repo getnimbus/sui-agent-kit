@@ -25,13 +25,13 @@ You can view the full documentation of the kit at [https://docs.getnimbus.io/sui
 ## 📦 Installation
 
 ```bash
-npm install sui-agent-kit
+npm install @getnimbus/sui-agent-kit
 ```
 
 ## Quick Start
 
 ```typescript
-import { SuiAgentKit, createSuiTools } from "sui-agent-kit";
+import { SuiAgentKit, createSuiTools } from "@getnimbus/sui-agent-kit";
 
 // Initialize with private key and optional RPC URL
 const agent = new SuiAgentKit(
