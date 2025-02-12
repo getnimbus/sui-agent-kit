@@ -16,7 +16,7 @@ export async function register_sns(
   agent: SuiAgentKit,
   name: string,
   years: number,
-  payToken: "SUI" | "USDC" | "USDT",
+  payToken: "SUI" | "USDC" | "NS",
 ): Promise<TransactionResponse> {
   try {
     const suinsClient = new SuinsClient({
@@ -26,7 +26,7 @@ export async function register_sns(
 
     const tx = new Transaction();
 
-    if (!["SUI", "USDC", "USDT"].includes(payToken)) {
+    if (!["SUI", "USDC", "NS"].includes(payToken)) {
       throw new Error("Invalid payToken");
     }
     const coinConfig = suinsClient.config.coins[payToken]; // Specify the coin type used for the transaction

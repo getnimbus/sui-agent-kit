@@ -130,7 +130,7 @@ export class SuiAgentKit {
   async registerSns(
     name: string,
     years: number,
-    payToken: "SUI" | "USDC" | "USDT",
+    payToken: "SUI" | "USDC" | "NS",
   ): Promise<TransactionResponse> {
     return register_sns(this, name, years, payToken);
   }
