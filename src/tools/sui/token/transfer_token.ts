@@ -60,14 +60,6 @@ export async function transfer_token(
     });
     const [primaryCoinX, ...restCoinXs] = coinXs.data;
 
-    // merge the coins
-    if (restCoinXs.length > 0) {
-      txb.mergeCoins(
-        txb.object(primaryCoinX.coinObjectId),
-        restCoinXs.map((coin) => txb.object(coin.coinObjectId)),
-      );
-    }
-
     // check if the balance is enough
     const decimals = coinMetadata.decimals;
     const total_balance = coinXs.data.reduce(
