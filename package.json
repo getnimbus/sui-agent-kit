@@ -38,6 +38,7 @@
     "@suilend/springsui-sdk": "1.0.12",
     "ai": "^4.0.22",
     "axios": "^1.7.9",
+    "axios-retry": "^4.5.0",
     "bignumber.js": "^9.1.2",
     "bn.js": "^5.2.1",
     "dayjs": "^1.11.13",

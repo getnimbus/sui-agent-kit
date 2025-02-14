@@ -17,6 +17,7 @@ import {
   SuiStakeSuilendTool,
   SuiWithDrawSuilendTool,
   SuiLendingSuilendTool,
+  SuiGetVaultsTool,
 } from "./agent";
 
 export function createSuiTools(suiKit: SuiAgentKit) {
@@ -36,5 +37,6 @@ export function createSuiTools(suiKit: SuiAgentKit) {
     new SuiStakeSuilendTool(suiKit),
     new SuiWithDrawSuilendTool(suiKit),
     new SuiLendingSuilendTool(suiKit),
+    new SuiGetVaultsTool(suiKit),
   ];
 }

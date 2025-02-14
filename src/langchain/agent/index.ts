@@ -13,3 +13,4 @@ export * from "./get_sns_name_record";
 export * from "./stake_suilend";
 export * from "./withdraw_suilend";
 export * from "./lending_suilend";
+export * from "./get_vaults";
