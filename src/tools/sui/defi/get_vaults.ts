@@ -7,6 +7,14 @@ import {
   VaultAPR,
   VaultType,
 } from "../../../types";
+import axios from "axios";
+
+const types = [
+  VaultType.LP,
+  VaultType.VAULT,
+  VaultType.STAKING,
+  VaultType.LENDING,
+];
 
 /**
  * Get vaults information
@@ -19,25 +27,31 @@ export async function getVaults(
   params: IGetVaultsParams = {
     address: "",
     order: "tvl",
-    sort: "desc",
-    limit: 10,
-    offset: 0,
     protocol: "",
-    type: VaultType.EMPTY,
     tvl: VaultTVL.EMPTY,
     apr: VaultAPR.EMPTY,
     tags: [],
   },
 ) {
   try {
-    const response = await nimbusClient.get("/v2/farming/vaults", {
-      params: {
-        ...params,
-        apr: encodeURIComponent(params.apr),
-        tvl: encodeURIComponent(params.tvl),
-      },
+    const requests = types.map((type) => {
+      return nimbusClient.get("/v2/farming/vaults", {
+        params: {
+          ...params,
+          type: type,
+          limit: 5,
+          apr: encodeURIComponent(params.apr),
+          tvl: encodeURIComponent(params.tvl),
+          chain: "SUI",
+        },
+      });
     });
-    return response.data;
+
+    const res = await axios.all(requests).then((responses) => {
+      return responses.map((response) => response.data?.data);
+    });
+
+    return res.flat();
   } catch (error: any) {
     logger.error(error);
     throw new Error(`Failed to get vaults: ${error.message}`);

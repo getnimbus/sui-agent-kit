@@ -1,6 +1,6 @@
 import { Tool } from "langchain/tools";
 import { SuiAgentKit } from "../../agent";
-import { VaultAPR, VaultTVL, VaultType, VaultTags } from "../../types";
+import { VaultAPR, VaultTVL } from "../../types";
 
 export class SuiGetVaultsTool extends Tool {
   name = "sui_get_vaults";
@@ -9,18 +9,15 @@ export class SuiGetVaultsTool extends Tool {
   Inputs (JSON string)
   address (string, optional, default: "")
   order (string, optional, default: "tvl")
-  sort (string, optional, default: "desc"): Enum: "asc", "desc".
-  limit (number, optional, default: 10)
-  offset (number, optional, default: 0)
   protocol (string, optional, default: "")
-  type (string, optional, default: ""): Enum: "LP", "VAULT", "STAKING", "LENDING".
   tvl (string, optional, default: ""): Enum: "< 100k", "100k - 500k", "500k - 1M", "> 1M".
   apr (string, optional, default: ""): Enum: "< 5%", "5% - 25%", "25% - 50%", "> 50%".
   tags (string[], optional, default: []): Enum: "stable_yield", "low_risk", "high_risk_high_return", "airdrop".
 
   Output Format
   The response must be in markdown table format.
-  The table should highlight key insights that help the user choose the best vault for investment, considering the provided filters.`;
+  The table should highlight key insights that help the user choose the best vault for investment, considering the provided filters.
+  Return exatcly the amount of records received from the API.`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
@@ -34,11 +31,7 @@ export class SuiGetVaultsTool extends Tool {
         const result = await this.suiKit.getVaults({
           address: "",
           order: "tvl",
-          sort: "desc",
-          limit: 10,
-          offset: 0,
           protocol: "",
-          type: VaultType.EMPTY,
           tvl: VaultTVL.EMPTY,
           apr: VaultAPR.EMPTY,
           tags: [],
@@ -62,11 +55,7 @@ export class SuiGetVaultsTool extends Tool {
       const result = await this.suiKit.getVaults({
         address: parsedInput.address || "",
         order: parsedInput.order || "tvl",
-        sort: parsedInput.sort || "desc",
-        limit: parsedInput.limit || 10,
-        offset: parsedInput.offset || 0,
         protocol: parsedInput.protocol || "",
-        type: parsedInput.type || "",
         tvl: parsedInput.tvl || "",
         apr: parsedInput.apr || "",
         tags: parsedInput.tags || [],

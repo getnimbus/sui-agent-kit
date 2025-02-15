@@ -302,12 +302,8 @@ export enum VaultType {
 export interface IGetVaultsParams {
   address: string;
   order: string;
-  sort: "asc" | "desc";
   protocol: string;
-  type: VaultType;
   tvl: VaultTVL;
   apr: VaultAPR;
   tags: VaultTags[];
-  limit: number;
-  offset: number;
 }
