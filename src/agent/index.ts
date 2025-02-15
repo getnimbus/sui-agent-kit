@@ -4,6 +4,7 @@ import { create_pool_cetus_CLMM, get_holding, swap } from "../tools";
 import {
   Config,
   ICreatePoolCLMMParams,
+  IGetVaultsParams,
   ISwapParams,
   TokenBalance,
   TransactionResponse,
@@ -30,6 +31,7 @@ import {
   staking_suilend,
   withdraw_suilend,
 } from "../tools/suilend";
+import { getVaults } from "../tools/sui/defi/get_vaults";
 
 /**
  * Main class for interacting with Sui blockchain
@@ -151,6 +153,10 @@ export class SuiAgentKit {
 
   async lendingSuilend(params: ILendingParams): Promise<TransactionResponse> {
     return lending_suilend(this, params);
+  }
+
+  async getVaults(params: IGetVaultsParams) {
+    return getVaults(this, params);
   }
 
   // async borrowSuilend(params: IBorrowParams): Promise<TransactionResponse> {

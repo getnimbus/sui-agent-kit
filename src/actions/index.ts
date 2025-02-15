@@ -13,6 +13,7 @@ import getSnsNameRecord from "./agent/getSnsNameRecord";
 import stakeSuilend from "./agent/stakeSuilend";
 import unstakeSuilend from "./agent/withdrawSuilend";
 import lendingSuilend from "./agent/lendingSuilend";
+import getVaults from "./agent/getVaults";
 
 export const ACTIONS = {
   // CREATE_IMAGE_ACTION: createImageAction,
@@ -30,6 +31,7 @@ export const ACTIONS = {
   STAKE_SUILEND: stakeSuilend,
   UNSTAKE_SUILEND: unstakeSuilend,
   LENDING_SUILEND: lendingSuilend,
+  GET_VAULTS: getVaults,
 };
 
 export type { Action, ActionExample, Handler } from "../types/action";

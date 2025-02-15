@@ -267,3 +267,43 @@ export interface ISwapParams {
 export interface NameRecordX extends NameRecord {
   humanReadableExpirationTimestampMs: string;
 }
+
+export enum VaultTags {
+  STABLE_YIELD = "stable_yield",
+  LOW_RISK = "low_risk",
+  HIGH_RISK_HIGH_RETURN = "high_risk_high_return",
+  AIRDROP = "airdrop",
+}
+
+export enum VaultTVL {
+  EMPTY = "",
+  LESS_THAN_100K = "< 100K",
+  BETWEEN_100K_500K = "100K - 500K",
+  BETWEEN_500K_1M = "500K - 1M",
+  MORE_THAN_1M = "> 1M",
+}
+
+export enum VaultAPR {
+  EMPTY = "",
+  LESS_THAN_5 = "< 5%",
+  BETWEEN_5_25 = "5% - 25%",
+  BETWEEN_25_50 = "25% - 50%",
+  MORE_THAN_50 = "> 50%",
+}
+
+export enum VaultType {
+  EMPTY = "",
+  LP = "LP",
+  VAULT = "VAULT",
+  STAKING = "STAKING",
+  LENDING = "LENDING",
+}
+
+export interface IGetVaultsParams {
+  address: string;
+  order: string;
+  protocol: string;
+  tvl: VaultTVL;
+  apr: VaultAPR;
+  tags: VaultTags[];
+}
