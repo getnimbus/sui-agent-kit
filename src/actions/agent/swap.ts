@@ -7,7 +7,8 @@ import { ISwapParams } from "../../types";
 const swapToken: Action = {
   name: "SWAP_TOKEN",
   similes: ["swap", "swap token", "exchange token", "trade token"],
-  description: "Swap tokens using 7k protocol",
+  description:
+    "Swap tokens using either 7k protocol (default) or FlowX aggregator",
   examples: [
     [
       {
@@ -25,7 +26,8 @@ const swapToken: Action = {
             tx_status: "success",
           },
         },
-        explanation: "Successfully swapped 10 SUI for USDC with 1% slippage",
+        explanation:
+          "Successfully swapped 10 SUI for USDC with 1% slippage using default 7k protocol",
       },
       {
         input: {
@@ -33,6 +35,7 @@ const swapToken: Action = {
           toToken: "USDC",
           inputAmount: 10,
           slippage: 0.01,
+          aggregator: "flowx",
         },
         output: {
           status: "success",
@@ -41,7 +44,8 @@ const swapToken: Action = {
             tx_status: "success",
           },
         },
-        explanation: "Successfully swapped 10 MIU for USDC with 1% slippage",
+        explanation:
+          "Successfully swapped 10 MIU for USDC with 1% slippage using FlowX aggregator",
       },
     ],
   ],
@@ -50,6 +54,7 @@ const swapToken: Action = {
     toToken: z.string(),
     inputAmount: z.number().positive(),
     slippage: z.number().min(0).max(1).optional(),
+    aggregator: z.string().optional(),
   }),
   handler: async (agent: SuiAgentKit, input: Record<string, any>) => {
     const params: ISwapParams = {
@@ -57,6 +62,7 @@ const swapToken: Action = {
       toToken: input.toToken,
       inputAmount: input.inputAmount,
       slippage: input.slippage,
+      aggregator: input.aggregator || "7k",
     };
     const result = await swap(agent, params);
 

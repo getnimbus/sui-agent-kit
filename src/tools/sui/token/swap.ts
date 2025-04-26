@@ -1,6 +1,7 @@
 import { setSuiClient, getQuote, buildTx } from "@7kprotocol/sdk-ts";
 import { ISwapParams, SuiAgentKit, TransactionResponse } from "../../../index";
 import logger from "../../../utils/logger";
+import { AggregatorQuoter } from "@flowx-finance/sdk";
 
 /**
  * Transfer token to another address
@@ -97,9 +98,13 @@ export async function swap(
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
+    const quoter = new AggregatorQuoter("mainnet");
 
     params.fromToken = COIN_MAPPING.get(params.fromToken) || params.fromToken;
     params.toToken = COIN_MAPPING.get(params.toToken) || params.toToken;
+    if (!params.aggregator) {
+      params.aggregator = "7k";
+    }
 
     // check balance
     const [balance, metadata] = await Promise.all([
@@ -124,11 +129,25 @@ export async function swap(
     }
 
     setSuiClient(agent.client);
-    const quoteResponse: any = await getQuote({
-      tokenIn: params.fromToken,
-      tokenOut: params.toToken,
-      amountIn: BigInt(adjustInputAmount).toString(),
-    });
+    let quoteResponse: any;
+    switch (params.aggregator) {
+      case "7k":
+        quoteResponse = await getQuote({
+          tokenIn: params.fromToken,
+          tokenOut: params.toToken,
+          amountIn: BigInt(adjustInputAmount).toString(),
+        });
+        break;
+      case "flowx":
+        quoteResponse = await quoter.getRoutes({
+          tokenIn: params.fromToken,
+          tokenOut: params.toToken,
+          amountIn: adjustInputAmount.toString(),
+        });
+        break;
+      default:
+        throw new Error("Invalid aggregator");
+    }
 
     const txBuild = await buildTx({
       quoteResponse,

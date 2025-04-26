@@ -262,6 +262,7 @@ export interface ISwapParams {
   toToken: string;
   inputAmount: number;
   slippage: number | undefined;
+  aggregator: string;
 }
 
 export interface NameRecordX extends NameRecord {
