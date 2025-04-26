@@ -1,6 +1,7 @@
 import { setSuiClient, getQuote, buildTx } from "@7kprotocol/sdk-ts";
 import { ISwapParams, SuiAgentKit, TransactionResponse } from "../../../index";
 import logger from "../../../utils/logger";
+import { AggregatorQuoter, TradeBuilder } from "@flowx-finance/sdk";
 
 /**
  * Transfer token to another address
@@ -97,9 +98,13 @@ export async function swap(
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
+    const quoter = new AggregatorQuoter("mainnet");
 
     params.fromToken = COIN_MAPPING.get(params.fromToken) || params.fromToken;
     params.toToken = COIN_MAPPING.get(params.toToken) || params.toToken;
+    if (!params.aggregator) {
+      params.aggregator = "7k";
+    }
 
     // check balance
     const [balance, metadata] = await Promise.all([
@@ -124,26 +129,56 @@ export async function swap(
     }
 
     setSuiClient(agent.client);
-    const quoteResponse: any = await getQuote({
-      tokenIn: params.fromToken,
-      tokenOut: params.toToken,
-      amountIn: BigInt(adjustInputAmount).toString(),
-    });
 
-    const txBuild = await buildTx({
-      quoteResponse,
-      accountAddress: agent.wallet_address,
-      slippage: Number(params.slippage || 0.01), // settings slippage or default 1%
-      commission: {
-        partner:
-          "0xfcd7df57ede898715bc7c5aba3dd31e23b715d2dd16668383ce123666a5e24c3",
-        commissionBps: 0,
-      },
-    });
+    let quoteResponse: any;
+    let txBuild: any;
+
+    switch (params.aggregator) {
+      case "7k": {
+        quoteResponse = await getQuote({
+          tokenIn: params.fromToken,
+          tokenOut: params.toToken,
+          amountIn: BigInt(adjustInputAmount).toString(),
+        });
+
+        txBuild = await buildTx({
+          quoteResponse,
+          accountAddress: agent.wallet_address,
+          slippage: Number(params.slippage || 0.01), // settings slippage or default 1%
+          commission: {
+            partner:
+              "0xfcd7df57ede898715bc7c5aba3dd31e23b715d2dd16668383ce123666a5e24c3",
+            commissionBps: 0,
+          },
+        }).then((res) => {
+          return res.tx;
+        });
+
+        break;
+      }
+      case "flowx": {
+        quoteResponse = await quoter.getRoutes({
+          tokenIn: params.fromToken,
+          tokenOut: params.toToken,
+          amountIn: adjustInputAmount.toString(),
+        });
+
+        const tradeBuilder = new TradeBuilder("mainnet", quoteResponse.routes); //routes get from quoter
+        txBuild = await tradeBuilder
+          .sender(agent.wallet_address || "") //Optional if you want pass coin later
+          .slippage((1 / 100) * 1e6) // Slippage 1%
+          .build()
+          .buildTransaction({ client });
+
+        break;
+      }
+      default:
+        throw new Error("Invalid aggregator");
+    }
 
     const txExec = await client.signAndExecuteTransaction({
       signer: agent.wallet,
-      transaction: txBuild.tx,
+      transaction: txBuild,
     });
 
     const tx = await client.waitForTransaction({
