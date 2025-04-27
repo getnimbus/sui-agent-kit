@@ -14,7 +14,7 @@ import { get_holding } from "../sui/token/get_balance";
  */
 
 // NOT COMPLETED
-export async function borrow_suilend(
+export async function repay_suilend(
   agent: SuiAgentKit,
   params: IBorrowParams,
 ): Promise<TransactionResponse> {
@@ -87,26 +87,19 @@ const getTransactionPayload = async (
 
     const obligation = userData && userData?.obligations?.[0];
 
-    const obligationOwnerCap =
-      userData &&
-      userData?.obligationOwnerCaps?.find(
-        (o: any) => o.obligationId === obligation?.id,
-      );
-
-    const coinTypeBorrow = appData?.lendingMarket?.reserves.find(
+    const coinTypeRepay = appData?.lendingMarket?.reserves.find(
       (r: any) => r.symbol === params.collateral,
     );
 
-    if (!coinTypeBorrow) {
-      throw new Error("This token is not supported for borrowing");
+    if (!coinTypeRepay) {
+      throw new Error("This token is not supported for repay Suilend");
     }
 
-    await appData?.suilendClient.borrowAndSendToUser(
+    await appData?.suilendClient.repayIntoObligation(
       agent.wallet_address,
-      obligationOwnerCap?.id,
       obligation?.id,
-      coinTypeBorrow?.token?.coinType,
-      amount * 10 ** (coinTypeBorrow?.token?.decimals || 9),
+      coinTypeRepay?.token?.coinType,
+      amount,
       transaction,
     );
 

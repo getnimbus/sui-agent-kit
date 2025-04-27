@@ -1,11 +1,17 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
-
 import { IStakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
-import { listSpringSuiStaking } from "./util";
-import { getSuilendSdkData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
+import {
+  useFetchAppData,
+  useFetchAppDataSpringSui,
+  useFetchUserData,
+} from "./util";
+import {
+  createObligationIfNoneExists,
+  sendObligationToUser,
+} from "@suilend/sdk";
 /**
  * Stake SUI into Suilend
  * @param agent - SuiAgentKit instance
@@ -56,12 +62,37 @@ const getTransactionPayload = async (
       throw new Error("Amount must be greater than 0");
     }
 
-    const tokenData = listSpringSuiStaking.find(
-      (r) => r.symbol.toLowerCase() === params.symbol.toLowerCase(),
+    const allAppData: any = await useFetchAppData(agent);
+    const appDataSpringSui: any = await useFetchAppDataSpringSui(agent);
+    const allUserData = await useFetchUserData(allAppData, agent);
+
+    const appData: any =
+      Object.values(allAppData ?? {}).find(
+        (item: any) => item?.lendingMarket?.slug === "market",
+      ) ?? Object.values(allAppData ?? {})[0];
+
+    const userData = appData?.lendingMarket?.id
+      ? allUserData?.[appData?.lendingMarket?.id]
+      : undefined;
+
+    const obligation = userData && userData?.obligations?.[0];
+
+    const obligationOwnerCap =
+      userData &&
+      userData?.obligationOwnerCaps?.find(
+        (o: any) => o.obligationId === obligation?.id,
+      );
+
+    const outToken: any = Object.values(appDataSpringSui?.lstDataMap).find(
+      (lstData: any) => lstData?.token?.symbol === params?.symbol,
     );
-    if (!tokenData) {
+
+    if (!outToken) {
       throw new Error("This token is not supported for staking Suilend");
     }
+
+    const outLstData =
+      await appDataSpringSui?.lstDataMap[outToken?.token?.coinType];
 
     // check balance
     const balancesMetadata = await get_holding(agent);
@@ -79,18 +110,46 @@ const getTransactionPayload = async (
 
     amount = Number(params.amount) * 10 ** 9;
 
-    const appData: any = await getSuilendSdkData(agent);
+    // TODO: update case user wanna stake and deposit and then set to true condition
+    if (false) {
+      const obligation = appDataSpringSui.obligations?.[0]; // Obligation with the highest TVL
+      const obligationOwnerCap = appDataSpringSui.obligationOwnerCaps?.find(
+        (o: any) => o.obligationId === obligation?.id,
+      );
 
-    const lstClient = appData?.lstClientMap[tokenData.symbol];
-    if (!lstClient) {
-      throw new Error("This token is not supported for staking");
+      const { obligationOwnerCapId, didCreate } = createObligationIfNoneExists(
+        appDataSpringSui?.suilendClient,
+        transaction,
+        obligationOwnerCap,
+      );
+
+      const lstCoin = outLstData!.lstClient.mintAmountAndRebalance(
+        transaction,
+        agent.wallet_address,
+        amount,
+      );
+
+      await appDataSpringSui?.suilendClient?.deposit(
+        lstCoin,
+        outLstData!.token.coinType,
+        obligationOwnerCapId,
+        transaction,
+      );
+
+      if (didCreate) {
+        sendObligationToUser(
+          obligationOwnerCapId,
+          agent.wallet_address,
+          transaction,
+        );
+      }
+    } else {
+      await outLstData!.lstClient.mintAmountAndRebalanceAndSendToUser(
+        transaction,
+        agent.wallet_address,
+        amount,
+      );
     }
-
-    await lstClient.mintAndRebalanceAndSendToUser(
-      transaction,
-      agent.wallet_address,
-      amount,
-    );
 
     return transaction;
   } catch (e) {

@@ -3,7 +3,7 @@ import logger from "../../utils/logger";
 
 import { IUnstakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
-import { getSuilendSdkData } from "./util";
+import { useFetchAppData, useFetchUserData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 
 /**
@@ -65,28 +65,39 @@ const getTransactionPayload = async (
 
     amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
-    const appData: any = await getSuilendSdkData(agent);
+    const allAppData: any = await useFetchAppData(agent);
+    const allUserData = await useFetchUserData(allAppData, agent);
 
-    const obligation = appData?.obligations?.[0];
-    const obligationOwnerCap = appData?.obligationOwnerCaps?.find(
-      (o: any) => o?.obligationId === obligation?.id,
+    const appData: any =
+      Object.values(allAppData ?? {}).find(
+        (item: any) => item?.lendingMarket?.slug === "market",
+      ) ?? Object.values(allAppData ?? {})[0];
+
+    const userData = appData?.lendingMarket?.id
+      ? allUserData?.[appData?.lendingMarket?.id]
+      : undefined;
+
+    const obligation = userData && userData?.obligations?.[0];
+    const obligationOwnerCap =
+      userData &&
+      userData?.obligationOwnerCaps?.find(
+        (o: any) => o.obligationId === obligation?.id,
+      );
+
+    // case withdraw lending from suilend
+    const coinTypeWithdraw = appData?.lendingMarket?.reserves.find(
+      (r: any) => r.symbol === params.symbol,
     );
 
-    const lstDataUnstacking = appData?.lstDataMap[tokenData.symbol];
-    if (!lstDataUnstacking) {
-      throw new Error("This token is not supported for unstaking");
+    if (!coinTypeWithdraw) {
+      throw new Error("This token is not supported for withdraw Suilend");
     }
-
-    const coinTypeUnstaking =
-      appData?.lendingMarket?.reserves.find(
-        (r: any) => r.symbol === tokenData.symbol,
-      )?.coinType || lstDataUnstacking?.token?.coinType;
 
     await appData?.suilendClient.withdrawAndSendToUser(
       agent.wallet_address,
-      obligationOwnerCap.id,
-      obligation.id,
-      coinTypeUnstaking,
+      obligationOwnerCap?.id,
+      obligation?.id,
+      coinTypeWithdraw?.token?.coinType,
       amount,
       transaction,
     );

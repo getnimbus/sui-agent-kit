@@ -3,9 +3,12 @@ import logger from "../../utils/logger";
 
 import { ILendingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
-import { listSUITokenSupportStakeSDKSuilend } from "./util";
-import { getSuilendSdkData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
+import { useFetchAppData, useFetchUserData } from "./util";
+import {
+  createObligationIfNoneExists,
+  sendObligationToUser,
+} from "@suilend/sdk";
 /**
  * Lending token into Suilend
  * @param agent - SuiAgentKit instance
@@ -56,6 +59,26 @@ const getTransactionPayload = async (
       throw new Error("Amount must be greater than 0");
     }
 
+    const allAppData: any = await useFetchAppData(agent);
+    const allUserData = await useFetchUserData(allAppData, agent);
+
+    const appData: any =
+      Object.values(allAppData ?? {}).find(
+        (item: any) => item?.lendingMarket?.slug === "market",
+      ) ?? Object.values(allAppData ?? {})[0];
+
+    const userData = appData?.lendingMarket?.id
+      ? allUserData?.[appData?.lendingMarket?.id]
+      : undefined;
+
+    const obligation = userData && userData?.obligations?.[0];
+
+    const obligationOwnerCap =
+      userData &&
+      userData?.obligationOwnerCaps?.find(
+        (o: any) => o.obligationId === obligation?.id,
+      );
+
     // check balance
     const balancesMetadata = await get_holding(agent);
 
@@ -73,43 +96,25 @@ const getTransactionPayload = async (
 
     amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
-    const appData: any = await getSuilendSdkData(agent);
-
-    const obligation = appData?.obligations?.[0];
-    const obligationOwnerCap = appData?.obligationOwnerCaps?.find(
-      (o: any) => o?.obligationId === obligation?.id,
+    const { obligationOwnerCapId, didCreate } = createObligationIfNoneExists(
+      appData?.suilendClient,
+      transaction,
+      obligationOwnerCap,
     );
 
-    const isNotEcosystemLTS = listSUITokenSupportStakeSDKSuilend.includes(
-      tokenData.symbol,
+    await appData?.suilendClient.depositIntoObligation(
+      agent.wallet_address,
+      tokenData.address,
+      amount as any,
+      transaction as any,
+      obligationOwnerCapId as string,
     );
 
-    if (isNotEcosystemLTS) {
-      await appData?.suilendClient.depositIntoObligation(
+    if (didCreate) {
+      sendObligationToUser(
+        obligationOwnerCapId,
         agent.wallet_address,
-        tokenData.address,
-        amount as any,
-        transaction as any,
-        obligationOwnerCap?.id as string,
-      );
-    } else {
-      const lstClient = appData?.lstClientMap[tokenData.symbol];
-      if (!lstClient) {
-        throw new Error("This token is not supported for staking");
-      }
-      const lstDataStaking = appData?.lstDataMap[tokenData.symbol];
-
-      const coinTypeStaking =
-        appData?.lendingMarket?.reserves.find(
-          (r: any) => r.symbol.toLowerCase() === tokenData.symbol,
-        )?.coinType || lstDataStaking?.token?.coinType;
-
-      await appData?.suilendClient?.depositCoin(
-        agent.wallet_address,
-        lstClient.mintAndRebalance(transaction, amount),
-        coinTypeStaking,
-        transaction as any,
-        obligationOwnerCap?.id,
+        transaction,
       );
     }
 
