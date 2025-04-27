@@ -25,6 +25,7 @@
   "dependencies": {
     "@7kprotocol/sdk-ts": "^2.4.1",
     "@ai-sdk/openai": "^1.0.11",
+    "@alphafi/alphafi-sdk": "^0.0.76",
     "@cetusprotocol/cetus-sui-clmm-sdk": "^5.3.4",
     "@flowx-finance/sdk": "^1.10.15",
     "@langchain/core": "^0.3.26",

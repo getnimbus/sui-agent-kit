@@ -7,7 +7,7 @@ import { useFetchAppData, useFetchUserData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 
 /**
- * Stake SUI into Suilend
+ * Borrow token from Suilend
  * @param agent - SuiAgentKit instance
  * @param params - IStakingParams
  * @returns Promise resolving to the transaction hash
@@ -44,7 +44,7 @@ export async function borrow_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake SUI into Suilend: ${error.message}`);
+    throw new Error(`Failed to borrow token from Suilend: ${error.message}`);
   }
 }
 

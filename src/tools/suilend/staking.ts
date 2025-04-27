@@ -13,7 +13,7 @@ import {
   sendObligationToUser,
 } from "@suilend/sdk";
 /**
- * Stake SUI into Suilend
+ * Stake token into Suilend
  * @param agent - SuiAgentKit instance
  * @param params - IStakingParams
  * @returns Promise resolving to the transaction hash
@@ -108,6 +108,7 @@ const getTransactionPayload = async (
       throw new Error("Insufficient SUI native balance");
     }
 
+    // TODO: update not remove hardcode decimal cause we support all token
     amount = Number(params.amount) * 10 ** 9;
 
     // TODO: update case user wanna stake and deposit and then set to true condition

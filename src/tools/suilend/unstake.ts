@@ -7,7 +7,7 @@ import { useFetchAppDataSpringSui } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 
 /**
- * Withdraw token from Suilend
+ * Unstake token from Suilend
  * @param agent - SuiAgentKit instance
  * @param params - IUnstakingParams
  * @returns Promise resolving to the transaction hash
@@ -40,7 +40,7 @@ export async function unstake_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake SUI into Suilend: ${error.message}`);
+    throw new Error(`Failed to unstake token into Suilend: ${error.message}`);
   }
 }
 

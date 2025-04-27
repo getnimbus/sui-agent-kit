@@ -43,7 +43,7 @@ export async function lending_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to lending token into Suilend: ${error.message}`);
+    throw new Error(`Failed to lending token from Suilend: ${error.message}`);
   }
 }
 

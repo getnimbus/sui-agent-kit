@@ -40,7 +40,7 @@ export async function withdraw_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake SUI into Suilend: ${error.message}`);
+    throw new Error(`Failed to withdraw token from Suilend: ${error.message}`);
   }
 }
 
