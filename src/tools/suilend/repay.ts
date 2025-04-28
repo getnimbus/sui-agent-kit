@@ -71,6 +71,18 @@ const getTransactionPayload = async (
       throw new Error("Token not found in your wallet");
     }
 
+    // check balance for GAS FEE
+    const nativeToken = balancesMetadata.find(
+      (r) => r.address === "0x2::sui::SUI",
+    );
+
+    if (
+      Number(nativeToken?.balance) <= 1 ||
+      Number(nativeToken?.balance) < amount
+    ) {
+      throw new Error("Insufficient SUI native balance");
+    }
+
     amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
     const allAppData: any = await useFetchAppData(agent);

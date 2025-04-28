@@ -73,6 +73,18 @@ const getTransactionPayload = async (
 
     amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
+    // check balance for GAS FEE
+    const nativeToken = balancesMetadata.find(
+      (r) => r.address === "0x2::sui::SUI",
+    );
+
+    if (
+      Number(nativeToken?.balance) <= 1 ||
+      Number(nativeToken?.balance) < amount
+    ) {
+      throw new Error("Insufficient SUI native balance");
+    }
+
     const allAppData: any = await useFetchAppData(agent);
     const allUserData = await useFetchUserData(allAppData, agent);
 

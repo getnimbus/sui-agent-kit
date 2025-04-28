@@ -60,7 +60,7 @@ const getTransactionPayload = async (
       throw new Error("Token address is required");
     }
 
-    // check balance
+    // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
 
     const nativeToken = balancesMetadata.find(

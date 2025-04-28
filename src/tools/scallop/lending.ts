@@ -1,22 +1,20 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
-import { IStakingParams } from "../../types/farming";
+
+import { ILendingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
+import { ScallopService } from "./utils";
+import { ScallopBuilder } from "@scallop-io/sui-scallop-sdk";
 import { get_holding } from "../sui/token/get_balance";
-import {
-  poolIdPoolNameMap,
-  depositSingleAssetTxb,
-  depositDoubleAssetTxb,
-} from "@alphafi/alphafi-sdk";
 /**
- * Stake token into Alphafi
+ * Lending token into Scallop
  * @param agent - SuiAgentKit instance
- * @param params - IStakingParams
+ * @param params - ILendingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function staking_alphafi(
+export async function lending_scallop(
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: ILendingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -42,13 +40,13 @@ export async function staking_alphafi(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake token into Alphafi: ${error.message}`);
+    throw new Error(`Failed to lending token from Scallop: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: ILendingParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();
@@ -58,15 +56,8 @@ const getTransactionPayload = async (
       throw new Error("Amount must be greater than 0");
     }
 
-    if (!params?.poolId) {
-      throw new Error("Pool ID is required");
-    }
-
-    const poolName = poolIdPoolNameMap[params?.poolId];
-
-    if (!poolName) {
-      throw new Error("Pool not support stake");
-    }
+    // TODO: update not remove hardcode decimal cause we support all token
+    amount = Number(params.amount) * 10 ** 9;
 
     // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
@@ -82,21 +73,39 @@ const getTransactionPayload = async (
       throw new Error("Insufficient SUI native balance");
     }
 
-    // TODO: update not remove hardcode decimal cause we support all token
-    amount = Number(params.amount) * 10 ** 9;
+    const scallopService = ScallopService.getInstance();
 
-    if (params?.isSinglePool && Boolean(params?.isSinglePool)) {
-      await depositSingleAssetTxb(
-        poolName,
+    const [scallopQuery, scallopClient] = await Promise.all([
+      scallopService.getScallopQuery(),
+      scallopService.getScallopClient(),
+    ]);
+
+    const scallopBuilder = new ScallopBuilder({
+      addressId: "67c44a103fe1b8c454eb9699",
+      walletAddress: agent.wallet_address,
+      networkType: "mainnet",
+    });
+    await scallopBuilder.init();
+
+    const obligationAddress = await scallopQuery.getObligations(
+      agent.wallet_address,
+    );
+
+    if (obligationAddress.length !== 0) {
+      const obligationId = obligationAddress[0].id;
+      await scallopClient.depositCollateral(
+        params.symbol as any,
+        amount,
+        false,
+        obligationId,
         agent.wallet_address,
-        amount.toString(),
       );
     } else {
-      await depositDoubleAssetTxb(
-        poolName,
-        agent.wallet_address,
-        amount.toString(),
+      await scallopClient.deposit(
+        params.symbol as any,
+        amount,
         false,
+        agent.wallet_address,
       );
     }
 

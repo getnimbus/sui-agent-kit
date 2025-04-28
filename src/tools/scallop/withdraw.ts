@@ -1,22 +1,20 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
-import { IStakingParams } from "../../types/farming";
+
+import { IUnstakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { get_holding } from "../sui/token/get_balance";
-import {
-  poolIdPoolNameMap,
-  depositSingleAssetTxb,
-  depositDoubleAssetTxb,
-} from "@alphafi/alphafi-sdk";
+import { ScallopService } from "./utils";
+
 /**
- * Stake token into Alphafi
+ * Withdraw token from Scallop
  * @param agent - SuiAgentKit instance
- * @param params - IStakingParams
+ * @param params - IUnstakingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function staking_alphafi(
+export async function withdraw_scallop(
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: IUnstakingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -42,35 +40,30 @@ export async function staking_alphafi(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake token into Alphafi: ${error.message}`);
+    throw new Error(`Failed to withdraw token from Scallop: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: IUnstakingParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();
-
     let amount = Number(params.amount);
-    if (amount <= 0) {
-      throw new Error("Amount must be greater than 0");
-    }
 
-    if (!params?.poolId) {
-      throw new Error("Pool ID is required");
-    }
+    // get metadata
+    const balancesMetadata = await get_holding(agent);
 
-    const poolName = poolIdPoolNameMap[params?.poolId];
+    const tokenData = balancesMetadata.find(
+      (r) => r.symbol.toLowerCase() === params.symbol.toLowerCase(),
+    );
 
-    if (!poolName) {
-      throw new Error("Pool not support stake");
+    if (!tokenData) {
+      throw new Error("Token not found in your wallet");
     }
 
     // check balance for GAS FEE
-    const balancesMetadata = await get_holding(agent);
-
     const nativeToken = balancesMetadata.find(
       (r) => r.address === "0x2::sui::SUI",
     );
@@ -82,23 +75,18 @@ const getTransactionPayload = async (
       throw new Error("Insufficient SUI native balance");
     }
 
-    // TODO: update not remove hardcode decimal cause we support all token
-    amount = Number(params.amount) * 10 ** 9;
+    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
-    if (params?.isSinglePool && Boolean(params?.isSinglePool)) {
-      await depositSingleAssetTxb(
-        poolName,
-        agent.wallet_address,
-        amount.toString(),
-      );
-    } else {
-      await depositDoubleAssetTxb(
-        poolName,
-        agent.wallet_address,
-        amount.toString(),
-        false,
-      );
-    }
+    const scallopService = ScallopService.getInstance();
+
+    const scallopClient = await scallopService.getScallopClient();
+
+    await scallopClient.withdraw(
+      params.symbol as any,
+      amount,
+      false,
+      agent.wallet_address,
+    );
 
     return transaction;
   } catch (e) {

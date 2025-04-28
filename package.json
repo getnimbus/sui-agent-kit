@@ -35,6 +35,7 @@
     "@langchain/openai": "^0.3.16",
     "@mysten/sui": "^1.28.2",
     "@mysten/suins": "^0.6.3",
+    "@scallop-io/sui-scallop-sdk": "^2.0.12",
     "@suilend/frontend-sui": "^0.2.58",
     "@suilend/sdk": "^1.1.52",
     "@suilend/springsui-sdk": "^1.0.22",

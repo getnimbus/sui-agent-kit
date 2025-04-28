@@ -6,6 +6,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { pool, borrowCoin } from "navi-sdk";
 import type { Pool, PoolConfig } from "navi-sdk/dist/types";
 import { handleFormatSymbol } from "./utils";
+import { get_holding } from "../sui/token/get_balance";
 
 /**
  * Borrow token from Navi
@@ -52,6 +53,20 @@ const getTransactionPayload = async (
   try {
     const transaction = new Transaction();
     let amount = Number(params.amount);
+
+    // check balance for GAS FEE
+    const balancesMetadata = await get_holding(agent);
+
+    const nativeToken = balancesMetadata.find(
+      (r) => r.address === "0x2::sui::SUI",
+    );
+
+    if (
+      Number(nativeToken?.balance) <= 1 ||
+      Number(nativeToken?.balance) < amount
+    ) {
+      throw new Error("Insufficient SUI native balance");
+    }
 
     // TODO: update not remove hardcode decimal cause we support all token
     amount = Number(params.amount) * 10 ** 9;

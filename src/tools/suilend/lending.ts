@@ -59,6 +59,10 @@ const getTransactionPayload = async (
       throw new Error("Amount must be greater than 0");
     }
 
+    if (!params?.tokenAddress) {
+      throw new Error("Token address is required");
+    }
+
     const allAppData: any = await useFetchAppData(agent);
     const allUserData = await useFetchUserData(allAppData, agent);
 
@@ -79,22 +83,22 @@ const getTransactionPayload = async (
         (o: any) => o.obligationId === obligation?.id,
       );
 
-    // check balance
+    // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
 
-    const tokenData = balancesMetadata.find(
-      (r) => r.symbol.toLowerCase() === params.symbol.toLowerCase(),
+    const nativeToken = balancesMetadata.find(
+      (r) => r.address === "0x2::sui::SUI",
     );
 
-    if (!tokenData) {
-      throw new Error("Token not found in your wallet");
+    if (
+      Number(nativeToken?.balance) <= 1 ||
+      Number(nativeToken?.balance) < amount
+    ) {
+      throw new Error("Insufficient SUI native balance");
     }
 
-    if (tokenData.balance < amount.toString()) {
-      throw new Error("Insufficient balance");
-    }
-
-    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
+    // TODO: update not remove hardcode decimal cause we support all token
+    amount = Number(params.amount) * 10 ** 9;
 
     const { obligationOwnerCapId, didCreate } = createObligationIfNoneExists(
       appData?.suilendClient,
@@ -104,7 +108,7 @@ const getTransactionPayload = async (
 
     await appData?.suilendClient.depositIntoObligation(
       agent.wallet_address,
-      tokenData.address,
+      params.tokenAddress,
       amount as any,
       transaction as any,
       obligationOwnerCapId as string,

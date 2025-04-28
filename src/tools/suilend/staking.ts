@@ -94,7 +94,7 @@ const getTransactionPayload = async (
     const outLstData =
       await appDataSpringSui?.lstDataMap[outToken?.token?.coinType];
 
-    // check balance
+    // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
 
     const nativeToken = balancesMetadata.find(

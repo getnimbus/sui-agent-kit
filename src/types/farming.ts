@@ -18,6 +18,7 @@ export interface ILendingParams extends IBaseTransactionParams {
   type: "LENDING";
   amount: number;
   symbol: string;
+  tokenAddress?: string;
 }
 
 export interface IBorrowParams extends IBaseTransactionParams {
