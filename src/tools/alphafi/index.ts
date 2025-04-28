@@ -1,2 +1,2 @@
-export * from "./staking";
+export * from "./lending";
 export * from "./unstake";

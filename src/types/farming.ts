@@ -12,6 +12,7 @@ export type FARMING_TYPE =
 
 export interface IBaseTransactionParams {
   type: FARMING_TYPE;
+  poolId?: string;
 }
 
 export interface ILendingParams extends IBaseTransactionParams {
@@ -19,6 +20,7 @@ export interface ILendingParams extends IBaseTransactionParams {
   amount: number;
   symbol: string;
   tokenAddress?: string;
+  isSinglePool?: boolean;
 }
 
 export interface IBorrowParams extends IBaseTransactionParams {
@@ -56,7 +58,6 @@ export interface IStakingParams extends IBaseTransactionParams {
   amount: number;
   symbol: string;
   poolId?: string;
-  isSinglePool?: boolean;
   tokenAddress?: string;
 }
 

@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
-import { IStakingParams } from "../../types/farming";
+import { ILendingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { get_holding } from "../sui/token/get_balance";
 import {
@@ -8,15 +8,16 @@ import {
   depositSingleAssetTxb,
   depositDoubleAssetTxb,
 } from "@alphafi/alphafi-sdk";
+import { getCoinMetadataInWallet } from "../../utils/get_coinmetadata_in_wallet";
 /**
- * Stake token into Alphafi
+ * Lend token into Alphafi
  * @param agent - SuiAgentKit instance
- * @param params - IStakingParams
+ * @param params - ILendingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function staking_alphafi(
+export async function lending_alphafi(
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: ILendingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -42,18 +43,24 @@ export async function staking_alphafi(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake token into Alphafi: ${error.message}`);
+    throw new Error(`Failed to lend token into Alphafi: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IStakingParams,
+  params: ILendingParams,
 ): Promise<Transaction> => {
   try {
-    const transaction = new Transaction();
+    const coinMetadata = await getCoinMetadataInWallet(agent, params.symbol);
 
-    let amount = Number(params.amount);
+    if (!coinMetadata) {
+      throw new Error(
+        `Your wallet doesn't have ${params.symbol} token, please transfer ${params.symbol} token to your wallet`,
+      );
+    }
+
+    const amount = Number(params.amount) * 10 ** (coinMetadata?.decimals || 0);
     if (amount <= 0) {
       throw new Error("Amount must be greater than 0");
     }
@@ -65,7 +72,7 @@ const getTransactionPayload = async (
     const poolName = poolIdPoolNameMap[params?.poolId];
 
     if (!poolName) {
-      throw new Error("Pool not support stake");
+      throw new Error("Pool not support lending");
     }
 
     // check balance for GAS FEE
@@ -82,17 +89,15 @@ const getTransactionPayload = async (
       throw new Error("Insufficient SUI native balance");
     }
 
-    // TODO: update not remove hardcode decimal cause we support all token
-    amount = Number(params.amount) * 10 ** 9;
-
+    let transaction;
     if (params?.isSinglePool && Boolean(params?.isSinglePool)) {
-      await depositSingleAssetTxb(
+      transaction = await depositSingleAssetTxb(
         poolName,
         agent.wallet_address,
         amount.toString(),
       );
     } else {
-      await depositDoubleAssetTxb(
+      transaction = await depositDoubleAssetTxb(
         poolName,
         agent.wallet_address,
         amount.toString(),
