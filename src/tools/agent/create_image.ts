@@ -37,7 +37,7 @@ export async function create_image(
     });
 
     return {
-      images: response.data.map((img: any) => img.url),
+      images: response?.data?.map((img: any) => img.url),
     };
   } catch (error: any) {
     logger.error(error);

@@ -1,22 +1,22 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
 
-import { IBorrowParams } from "../../types/farming";
+import { IUnstakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
-import { useFetchAppData, useFetchUserData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
+import { pool, withdrawCoin } from "navi-sdk";
+import type { Pool, PoolConfig } from "navi-sdk/dist/types";
+import { handleFormatSymbol } from "./utils";
 
 /**
- * Borrow token from Suilend
+ * Unstake token from Navi
  * @param agent - SuiAgentKit instance
- * @param params - IStakingParams
+ * @param params - IUnstakingParams
  * @returns Promise resolving to the transaction hash
  */
-
-// NOT COMPLETED
-export async function borrow_suilend(
+export async function unstake_navi(
   agent: SuiAgentKit,
-  params: IBorrowParams,
+  params: IUnstakingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -39,39 +39,31 @@ export async function borrow_suilend(
     return {
       tx_hash: txExec.digest,
       tx_status: res.effects?.status.status || "unknown",
-      // tx_hash: "",
-      // tx_status: "success",
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to borrow token from Suilend: ${error.message}`);
+    throw new Error(`Failed to unstake token from Navi: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IBorrowParams,
+  params: IUnstakingParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();
-
     let amount = Number(params.amount);
-    if (amount <= 0) {
-      throw new Error("Amount must be greater than 0");
-    }
 
-    // check balance
+    // get metadata
     const balancesMetadata = await get_holding(agent);
 
     const tokenData = balancesMetadata.find(
-      (r) => r.symbol === params.collateral,
+      (r) => r.symbol.toLowerCase() === params.symbol.toLowerCase(),
     );
 
     if (!tokenData) {
       throw new Error("Token not found in your wallet");
     }
-
-    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
     // check balance for GAS FEE
     const nativeToken = balancesMetadata.find(
@@ -85,42 +77,17 @@ const getTransactionPayload = async (
       throw new Error("Insufficient SUI native balance");
     }
 
-    const allAppData: any = await useFetchAppData(agent);
-    const allUserData = await useFetchUserData(allAppData, agent);
+    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
-    const appData: any =
-      Object.values(allAppData ?? {}).find(
-        (item: any) => item?.lendingMarket?.slug === "market",
-      ) ?? Object.values(allAppData ?? {})[0];
+    const poolConfigUnStake: PoolConfig =
+      pool[handleFormatSymbol(params?.symbol) as keyof Pool];
 
-    const userData = appData?.lendingMarket?.id
-      ? allUserData?.[appData?.lendingMarket?.id]
-      : undefined;
-
-    const obligation = userData && userData?.obligations?.[0];
-
-    const obligationOwnerCap =
-      userData &&
-      userData?.obligationOwnerCaps?.find(
-        (o: any) => o.obligationId === obligation?.id,
-      );
-
-    const coinTypeBorrow = appData?.lendingMarket?.reserves.find(
-      (r: any) => r.symbol === params.collateral,
-    );
-
-    if (!coinTypeBorrow) {
-      throw new Error("This token is not supported for borrowing");
-    }
-
-    await appData?.suilendClient.borrowAndSendToUser(
-      agent.wallet_address,
-      obligationOwnerCap?.id,
-      obligation?.id,
-      coinTypeBorrow?.token?.coinType,
-      amount * 10 ** (coinTypeBorrow?.token?.decimals || 9),
+    const coinsDataUnstaking = await withdrawCoin(
       transaction,
+      poolConfigUnStake,
+      amount,
     );
+    transaction.transferObjects(coinsDataUnstaking, agent.wallet_address);
 
     return transaction;
   } catch (e) {

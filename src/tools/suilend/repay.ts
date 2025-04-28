@@ -7,14 +7,14 @@ import { useFetchAppData, useFetchUserData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 
 /**
- * Borrow token from Suilend
+ * Repay token into Suilend
  * @param agent - SuiAgentKit instance
  * @param params - IStakingParams
  * @returns Promise resolving to the transaction hash
  */
 
 // NOT COMPLETED
-export async function borrow_suilend(
+export async function repay_suilend(
   agent: SuiAgentKit,
   params: IBorrowParams,
 ): Promise<TransactionResponse> {
@@ -44,7 +44,7 @@ export async function borrow_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to borrow token from Suilend: ${error.message}`);
+    throw new Error(`Failed to repay token to Suilend: ${error.message}`);
   }
 }
 
@@ -71,8 +71,6 @@ const getTransactionPayload = async (
       throw new Error("Token not found in your wallet");
     }
 
-    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
-
     // check balance for GAS FEE
     const nativeToken = balancesMetadata.find(
       (r) => r.address === "0x2::sui::SUI",
@@ -84,6 +82,8 @@ const getTransactionPayload = async (
     ) {
       throw new Error("Insufficient SUI native balance");
     }
+
+    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
     const allAppData: any = await useFetchAppData(agent);
     const allUserData = await useFetchUserData(allAppData, agent);
@@ -99,26 +99,19 @@ const getTransactionPayload = async (
 
     const obligation = userData && userData?.obligations?.[0];
 
-    const obligationOwnerCap =
-      userData &&
-      userData?.obligationOwnerCaps?.find(
-        (o: any) => o.obligationId === obligation?.id,
-      );
-
-    const coinTypeBorrow = appData?.lendingMarket?.reserves.find(
+    const coinTypeRepay = appData?.lendingMarket?.reserves.find(
       (r: any) => r.symbol === params.collateral,
     );
 
-    if (!coinTypeBorrow) {
-      throw new Error("This token is not supported for borrowing");
+    if (!coinTypeRepay) {
+      throw new Error("This token is not supported for repay Suilend");
     }
 
-    await appData?.suilendClient.borrowAndSendToUser(
+    await appData?.suilendClient.repayIntoObligation(
       agent.wallet_address,
-      obligationOwnerCap?.id,
       obligation?.id,
-      coinTypeBorrow?.token?.coinType,
-      amount * 10 ** (coinTypeBorrow?.token?.decimals || 9),
+      coinTypeRepay?.token?.coinType,
+      amount,
       transaction,
     );
 

@@ -3,7 +3,7 @@ import logger from "../../utils/logger";
 
 import { IUnstakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
-import { getSuilendSdkData } from "./util";
+import { useFetchAppData, useFetchUserData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
 
 /**
@@ -40,7 +40,7 @@ export async function withdraw_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to stake SUI into Suilend: ${error.message}`);
+    throw new Error(`Failed to withdraw token from Suilend: ${error.message}`);
   }
 }
 
@@ -63,30 +63,52 @@ const getTransactionPayload = async (
       throw new Error("Token not found in your wallet");
     }
 
-    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
-
-    const appData: any = await getSuilendSdkData(agent);
-
-    const obligation = appData?.obligations?.[0];
-    const obligationOwnerCap = appData?.obligationOwnerCaps?.find(
-      (o: any) => o?.obligationId === obligation?.id,
+    // check balance for GAS FEE
+    const nativeToken = balancesMetadata.find(
+      (r) => r.address === "0x2::sui::SUI",
     );
 
-    const lstDataUnstacking = appData?.lstDataMap[tokenData.symbol];
-    if (!lstDataUnstacking) {
-      throw new Error("This token is not supported for unstaking");
+    if (
+      Number(nativeToken?.balance) <= 1 ||
+      Number(nativeToken?.balance) < amount
+    ) {
+      throw new Error("Insufficient SUI native balance");
     }
 
-    const coinTypeUnstaking =
-      appData?.lendingMarket?.reserves.find(
-        (r: any) => r.symbol === tokenData.symbol,
-      )?.coinType || lstDataUnstacking?.token?.coinType;
+    amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
+
+    const allAppData: any = await useFetchAppData(agent);
+    const allUserData = await useFetchUserData(allAppData, agent);
+
+    const appData: any =
+      Object.values(allAppData ?? {}).find(
+        (item: any) => item?.lendingMarket?.slug === "market",
+      ) ?? Object.values(allAppData ?? {})[0];
+
+    const userData = appData?.lendingMarket?.id
+      ? allUserData?.[appData?.lendingMarket?.id]
+      : undefined;
+
+    const obligation = userData && userData?.obligations?.[0];
+    const obligationOwnerCap =
+      userData &&
+      userData?.obligationOwnerCaps?.find(
+        (o: any) => o.obligationId === obligation?.id,
+      );
+
+    const coinTypeWithdraw = appData?.lendingMarket?.reserves.find(
+      (r: any) => r.symbol === params.symbol,
+    );
+
+    if (!coinTypeWithdraw) {
+      throw new Error("This token is not supported for withdraw Suilend");
+    }
 
     await appData?.suilendClient.withdrawAndSendToUser(
       agent.wallet_address,
-      obligationOwnerCap.id,
-      obligation.id,
-      coinTypeUnstaking,
+      obligationOwnerCap?.id,
+      obligation?.id,
+      coinTypeWithdraw?.token?.coinType,
       amount,
       transaction,
     );

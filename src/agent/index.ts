@@ -32,6 +32,7 @@ import {
   withdraw_suilend,
 } from "../tools/suilend";
 import { getVaults } from "../tools/sui/defi/get_vaults";
+import { lending_alphafi } from "../tools/alphafi";
 
 /**
  * Main class for interacting with Sui blockchain
@@ -162,4 +163,8 @@ export class SuiAgentKit {
   // async borrowSuilend(params: IBorrowParams): Promise<TransactionResponse> {
   //   return borrow_suilend(this, params);
   // }
+
+  async lendingAlphafi(params: ILendingParams): Promise<TransactionResponse> {
+    return lending_alphafi(this, params);
+  }
 }

@@ -1,23 +1,20 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
-
-import { ILendingParams } from "../../types/farming";
+import { IStakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { get_holding } from "../sui/token/get_balance";
-import { useFetchAppData, useFetchUserData } from "./util";
-import {
-  createObligationIfNoneExists,
-  sendObligationToUser,
-} from "@suilend/sdk";
+import { pool, getCoins, returnMergedCoins, depositCoin } from "navi-sdk";
+import type { Pool, PoolConfig } from "navi-sdk/dist/types";
+import { handleFormatSymbol } from "./utils";
 /**
- * Lending token into Suilend
+ * Stake token into Navi
  * @param agent - SuiAgentKit instance
- * @param params - ILendingParams
+ * @param params - IStakingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function lending_suilend(
+export async function staking_navi(
   agent: SuiAgentKit,
-  params: ILendingParams,
+  params: IStakingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -43,13 +40,13 @@ export async function lending_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to lending token from Suilend: ${error.message}`);
+    throw new Error(`Failed to stake token into Navi: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: ILendingParams,
+  params: IStakingParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();
@@ -62,26 +59,6 @@ const getTransactionPayload = async (
     if (!params?.tokenAddress) {
       throw new Error("Token address is required");
     }
-
-    const allAppData: any = await useFetchAppData(agent);
-    const allUserData = await useFetchUserData(allAppData, agent);
-
-    const appData: any =
-      Object.values(allAppData ?? {}).find(
-        (item: any) => item?.lendingMarket?.slug === "market",
-      ) ?? Object.values(allAppData ?? {})[0];
-
-    const userData = appData?.lendingMarket?.id
-      ? allUserData?.[appData?.lendingMarket?.id]
-      : undefined;
-
-    const obligation = userData && userData?.obligations?.[0];
-
-    const obligationOwnerCap =
-      userData &&
-      userData?.obligationOwnerCaps?.find(
-        (o: any) => o.obligationId === obligation?.id,
-      );
 
     // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
@@ -100,26 +77,34 @@ const getTransactionPayload = async (
     // TODO: update not remove hardcode decimal cause we support all token
     amount = Number(params.amount) * 10 ** 9;
 
-    const { obligationOwnerCapId, didCreate } = createObligationIfNoneExists(
-      appData?.suilendClient,
-      transaction,
-      obligationOwnerCap,
-    );
+    const poolConfigStake: PoolConfig =
+      pool[handleFormatSymbol(params?.symbol) as keyof Pool];
 
-    await appData?.suilendClient.depositIntoObligation(
+    const coinInfo = await getCoins(
+      agent.client as any,
       agent.wallet_address,
       params.tokenAddress,
-      amount as any,
-      transaction as any,
-      obligationOwnerCapId as string,
     );
 
-    if (didCreate) {
-      sendObligationToUser(
-        obligationOwnerCapId,
-        agent.wallet_address,
-        transaction,
-      );
+    if (!coinInfo?.data?.[0]) {
+      throw new Error(`Insufficient balance for ${params.symbol}`);
+    }
+
+    if (poolConfigStake) {
+      if (handleFormatSymbol(params?.symbol) === "Sui") {
+        const toDepositStake = transaction.splitCoins(transaction.gas, [
+          amount,
+        ]);
+        await depositCoin(transaction, poolConfigStake, toDepositStake, amount);
+      } else {
+        const mergedCoinObject = returnMergedCoins(transaction, coinInfo);
+        await depositCoin(
+          transaction,
+          poolConfigStake,
+          mergedCoinObject,
+          amount,
+        );
+      }
     }
 
     return transaction;
