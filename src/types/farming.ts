@@ -56,6 +56,7 @@ export interface IStakingParams extends IBaseTransactionParams {
   symbol: string;
   poolId?: string;
   isSinglePool?: boolean;
+  tokenAddress?: string;
 }
 
 export interface IUnstakingParams extends IBaseTransactionParams {

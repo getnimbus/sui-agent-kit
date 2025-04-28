@@ -3661,7 +3661,7 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-navi-sdk@^1.6.2:
+navi-sdk@^1.6.2, navi-sdk@^1.6.4:
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/navi-sdk/-/navi-sdk-1.6.4.tgz#35aee71341578568b682bc47faa806876da9c50e"
   integrity sha512-gQWqXD2DwU7yf8wrG3o/r2I8bOG8qWzAdIrkDiLu2z1JdXGOhB2zm5PiH0jfJ2DTDZhQdCJcytWDIN+rVjCCpw==
