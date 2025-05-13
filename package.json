@@ -3,6 +3,10 @@
   "version": "0.1.22",
   "description": "connect any ai agents to sui protocols",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getnimbus/sui-agent-kit.git"
+  },
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && copyfiles -u 3 src/utils/move-template/move-bytecode-template.js dist/utils/move-template",
