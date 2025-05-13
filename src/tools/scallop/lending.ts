@@ -3,19 +3,16 @@ import logger from "../../utils/logger";
 
 import { ILendingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
+import { ScallopService } from "./utils";
+import { ScallopBuilder } from "@scallop-io/sui-scallop-sdk";
 import { get_holding } from "../sui/token/get_balance";
-import { useFetchAppData, useFetchUserData } from "./util";
-import {
-  createObligationIfNoneExists,
-  sendObligationToUser,
-} from "@suilend/sdk";
 /**
- * Lending token into Suilend
+ * Lending token into Scallop
  * @param agent - SuiAgentKit instance
  * @param params - ILendingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function lending_suilend(
+export async function lending_scallop(
   agent: SuiAgentKit,
   params: ILendingParams,
 ): Promise<TransactionResponse> {
@@ -43,7 +40,7 @@ export async function lending_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to lending token from Suilend: ${error.message}`);
+    throw new Error(`Failed to lending token from Scallop: ${error.message}`);
   }
 }
 
@@ -59,29 +56,8 @@ const getTransactionPayload = async (
       throw new Error("Amount must be greater than 0");
     }
 
-    if (!params?.tokenAddress) {
-      throw new Error("Token address is required");
-    }
-
-    const allAppData: any = await useFetchAppData(agent);
-    const allUserData = await useFetchUserData(allAppData, agent);
-
-    const appData: any =
-      Object.values(allAppData ?? {}).find(
-        (item: any) => item?.lendingMarket?.slug === "market",
-      ) ?? Object.values(allAppData ?? {})[0];
-
-    const userData = appData?.lendingMarket?.id
-      ? allUserData?.[appData?.lendingMarket?.id]
-      : undefined;
-
-    const obligation = userData && userData?.obligations?.[0];
-
-    const obligationOwnerCap =
-      userData &&
-      userData?.obligationOwnerCaps?.find(
-        (o: any) => o.obligationId === obligation?.id,
-      );
+    // TODO: update not remove hardcode decimal cause we support all token
+    amount = Number(params.amount) * 10 ** 9;
 
     // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
@@ -97,28 +73,39 @@ const getTransactionPayload = async (
       throw new Error("Insufficient SUI native balance");
     }
 
-    // TODO: update not remove hardcode decimal cause we support all token
-    amount = Number(params.amount) * 10 ** 9;
+    const scallopService = ScallopService.getInstance();
 
-    const { obligationOwnerCapId, didCreate } = createObligationIfNoneExists(
-      appData?.suilendClient,
-      transaction,
-      obligationOwnerCap,
-    );
+    const [scallopQuery, scallopClient] = await Promise.all([
+      scallopService.getScallopQuery(),
+      scallopService.getScallopClient(),
+    ]);
 
-    await appData?.suilendClient.depositIntoObligation(
+    const scallopBuilder = new ScallopBuilder({
+      addressId: "67c44a103fe1b8c454eb9699",
+      walletAddress: agent.wallet_address,
+      networkType: "mainnet",
+    });
+    await scallopBuilder.init();
+
+    const obligationAddress = await scallopQuery.getObligations(
       agent.wallet_address,
-      params.tokenAddress,
-      amount as any,
-      transaction as any,
-      obligationOwnerCapId as string,
     );
 
-    if (didCreate) {
-      sendObligationToUser(
-        obligationOwnerCapId,
+    if (obligationAddress.length !== 0) {
+      const obligationId = obligationAddress[0].id;
+      await scallopClient.depositCollateral(
+        params.symbol as any,
+        amount,
+        false,
+        obligationId,
         agent.wallet_address,
-        transaction,
+      );
+    } else {
+      await scallopClient.deposit(
+        params.symbol as any,
+        amount,
+        false,
+        agent.wallet_address,
       );
     }
 

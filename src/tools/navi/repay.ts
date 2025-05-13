@@ -1,23 +1,22 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
 
-import { ILendingParams } from "../../types/farming";
+import { IRepayParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
+import { pool, getCoins, returnMergedCoins, repayDebt } from "navi-sdk";
+import type { Pool, PoolConfig } from "navi-sdk/dist/types";
+import { handleFormatSymbol } from "./utils";
 import { get_holding } from "../sui/token/get_balance";
-import { useFetchAppData, useFetchUserData } from "./util";
-import {
-  createObligationIfNoneExists,
-  sendObligationToUser,
-} from "@suilend/sdk";
+
 /**
- * Lending token into Suilend
+ * Repay token from Navi
  * @param agent - SuiAgentKit instance
- * @param params - ILendingParams
+ * @param params - IRepayParams
  * @returns Promise resolving to the transaction hash
  */
-export async function lending_suilend(
+export async function repay_navi(
   agent: SuiAgentKit,
-  params: ILendingParams,
+  params: IRepayParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -43,45 +42,17 @@ export async function lending_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to lending token from Suilend: ${error.message}`);
+    throw new Error(`Failed to unstake token from Navi: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: ILendingParams,
+  params: IRepayParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();
-
     let amount = Number(params.amount);
-    if (amount <= 0) {
-      throw new Error("Amount must be greater than 0");
-    }
-
-    if (!params?.tokenAddress) {
-      throw new Error("Token address is required");
-    }
-
-    const allAppData: any = await useFetchAppData(agent);
-    const allUserData = await useFetchUserData(allAppData, agent);
-
-    const appData: any =
-      Object.values(allAppData ?? {}).find(
-        (item: any) => item?.lendingMarket?.slug === "market",
-      ) ?? Object.values(allAppData ?? {})[0];
-
-    const userData = appData?.lendingMarket?.id
-      ? allUserData?.[appData?.lendingMarket?.id]
-      : undefined;
-
-    const obligation = userData && userData?.obligations?.[0];
-
-    const obligationOwnerCap =
-      userData &&
-      userData?.obligationOwnerCaps?.find(
-        (o: any) => o.obligationId === obligation?.id,
-      );
 
     // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
@@ -100,26 +71,21 @@ const getTransactionPayload = async (
     // TODO: update not remove hardcode decimal cause we support all token
     amount = Number(params.amount) * 10 ** 9;
 
-    const { obligationOwnerCapId, didCreate } = createObligationIfNoneExists(
-      appData?.suilendClient,
-      transaction,
-      obligationOwnerCap,
-    );
+    const poolConfigRepay: PoolConfig =
+      pool[handleFormatSymbol(params?.collateral) as keyof Pool];
 
-    await appData?.suilendClient.depositIntoObligation(
-      agent.wallet_address,
-      params.tokenAddress,
-      amount as any,
-      transaction as any,
-      obligationOwnerCapId as string,
-    );
+    if (handleFormatSymbol(params?.collateral) === "Sui") {
+      const toDepositRepay = transaction.splitCoins(transaction.gas, [amount]);
 
-    if (didCreate) {
-      sendObligationToUser(
-        obligationOwnerCapId,
+      await repayDebt(transaction, poolConfigRepay, toDepositRepay, amount);
+    } else {
+      const coinInfoRepay = await getCoins(
+        agent.client as any,
         agent.wallet_address,
-        transaction,
+        params.tokenAddress,
       );
+      const mergedCoinObject = returnMergedCoins(transaction, coinInfoRepay);
+      await repayDebt(transaction, poolConfigRepay, mergedCoinObject, amount);
     }
 
     return transaction;

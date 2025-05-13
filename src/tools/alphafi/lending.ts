@@ -1,21 +1,21 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
-
 import { ILendingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { get_holding } from "../sui/token/get_balance";
-import { useFetchAppData, useFetchUserData } from "./util";
 import {
-  createObligationIfNoneExists,
-  sendObligationToUser,
-} from "@suilend/sdk";
+  poolIdPoolNameMap,
+  depositSingleAssetTxb,
+  depositDoubleAssetTxb,
+} from "@alphafi/alphafi-sdk";
+import { getCoinMetadataInWallet } from "../../utils/get_coinmetadata_in_wallet";
 /**
- * Lending token into Suilend
+ * Lend token into Alphafi
  * @param agent - SuiAgentKit instance
  * @param params - ILendingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function lending_suilend(
+export async function lending_alphafi(
   agent: SuiAgentKit,
   params: ILendingParams,
 ): Promise<TransactionResponse> {
@@ -43,7 +43,7 @@ export async function lending_suilend(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to lending token from Suilend: ${error.message}`);
+    throw new Error(`Failed to lend token into Alphafi: ${error.message}`);
   }
 }
 
@@ -52,36 +52,28 @@ const getTransactionPayload = async (
   params: ILendingParams,
 ): Promise<Transaction> => {
   try {
-    const transaction = new Transaction();
+    const coinMetadata = await getCoinMetadataInWallet(agent, params.symbol);
 
-    let amount = Number(params.amount);
+    if (!coinMetadata) {
+      throw new Error(
+        `Your wallet doesn't have ${params.symbol} token, please transfer ${params.symbol} token to your wallet`,
+      );
+    }
+
+    const amount = Number(params.amount) * 10 ** (coinMetadata?.decimals || 0);
     if (amount <= 0) {
       throw new Error("Amount must be greater than 0");
     }
 
-    if (!params?.tokenAddress) {
-      throw new Error("Token address is required");
+    if (!params?.poolId) {
+      throw new Error("Pool ID is required");
     }
 
-    const allAppData: any = await useFetchAppData(agent);
-    const allUserData = await useFetchUserData(allAppData, agent);
+    const poolName = poolIdPoolNameMap[params?.poolId];
 
-    const appData: any =
-      Object.values(allAppData ?? {}).find(
-        (item: any) => item?.lendingMarket?.slug === "market",
-      ) ?? Object.values(allAppData ?? {})[0];
-
-    const userData = appData?.lendingMarket?.id
-      ? allUserData?.[appData?.lendingMarket?.id]
-      : undefined;
-
-    const obligation = userData && userData?.obligations?.[0];
-
-    const obligationOwnerCap =
-      userData &&
-      userData?.obligationOwnerCaps?.find(
-        (o: any) => o.obligationId === obligation?.id,
-      );
+    if (!poolName) {
+      throw new Error("Pool not support lending");
+    }
 
     // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
@@ -97,28 +89,19 @@ const getTransactionPayload = async (
       throw new Error("Insufficient SUI native balance");
     }
 
-    // TODO: update not remove hardcode decimal cause we support all token
-    amount = Number(params.amount) * 10 ** 9;
-
-    const { obligationOwnerCapId, didCreate } = createObligationIfNoneExists(
-      appData?.suilendClient,
-      transaction,
-      obligationOwnerCap,
-    );
-
-    await appData?.suilendClient.depositIntoObligation(
-      agent.wallet_address,
-      params.tokenAddress,
-      amount as any,
-      transaction as any,
-      obligationOwnerCapId as string,
-    );
-
-    if (didCreate) {
-      sendObligationToUser(
-        obligationOwnerCapId,
+    let transaction;
+    if (params?.isSinglePool && Boolean(params?.isSinglePool)) {
+      transaction = await depositSingleAssetTxb(
+        poolName,
         agent.wallet_address,
-        transaction,
+        amount.toString(),
+      );
+    } else {
+      transaction = await depositDoubleAssetTxb(
+        poolName,
+        agent.wallet_address,
+        amount.toString(),
+        false,
       );
     }
 
