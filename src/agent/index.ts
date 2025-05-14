@@ -69,7 +69,7 @@ export class SuiAgentKit {
     configOrKey: Config | string | null,
   ) {
     this.client = new SuiClient({
-      url: getFullnodeUrl("mainnet"),
+      url: rpc_url,
     });
     this.wallet = Ed25519Keypair.fromSecretKey(private_key);
     this.wallet_address = this.wallet.getPublicKey().toSuiAddress();
