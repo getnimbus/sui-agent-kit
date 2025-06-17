@@ -1,8 +1,12 @@
 {
   "name": "@getnimbus/sui-agent-kit",
-  "version": "0.1.22",
+  "version": "0.1.25",
   "description": "connect any ai agents to sui protocols",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getnimbus/sui-agent-kit.git"
+  },
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && copyfiles -u 3 src/utils/move-template/move-bytecode-template.js dist/utils/move-template",
@@ -21,7 +25,7 @@
   },
   "keywords": [],
   "author": "Nimbus",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "dependencies": {
     "@7kprotocol/sdk-ts": "^3.0.2",
     "@ai-sdk/openai": "^1.0.11",

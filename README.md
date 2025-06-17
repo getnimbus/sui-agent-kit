@@ -6,6 +6,8 @@
 
 An open-source toolkit for connecting AI agents to Sui protocols. Now, any agent, using any model can autonomously perform 15+ Sui actions:
 
+_Powered by [Nimbus](https://docs.getnimbus.io/)_
+
 - Trade tokens
 - Launch new tokens
 - Lend assets
