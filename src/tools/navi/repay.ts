@@ -77,15 +77,28 @@ const getTransactionPayload = async (
     if (handleFormatSymbol(params?.collateral) === "Sui") {
       const toDepositRepay = transaction.splitCoins(transaction.gas, [amount]);
 
-      await repayDebt(transaction, poolConfigRepay, toDepositRepay, amount);
+      await repayDebt(
+        transaction as any,
+        poolConfigRepay,
+        toDepositRepay,
+        amount,
+      );
     } else {
       const coinInfoRepay = await getCoins(
         agent.client as any,
         agent.wallet_address,
         params.tokenAddress,
       );
-      const mergedCoinObject = returnMergedCoins(transaction, coinInfoRepay);
-      await repayDebt(transaction, poolConfigRepay, mergedCoinObject, amount);
+      const mergedCoinObject = returnMergedCoins(
+        transaction as any,
+        coinInfoRepay,
+      );
+      await repayDebt(
+        transaction as any,
+        poolConfigRepay,
+        mergedCoinObject,
+        amount,
+      );
     }
 
     return transaction;

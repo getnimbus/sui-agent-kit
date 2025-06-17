@@ -41,6 +41,20 @@ import { ObligationOwnerCap } from "@suilend/sdk/_generated/suilend/lending-mark
 import { Reserve } from "@suilend/sdk/_generated/suilend/reserve/structs";
 import pLimit from "p-limit";
 
+const retryAsyncCall = async <T>(
+  fn: () => Promise<T>,
+  times: number = 3,
+): Promise<T> => {
+  try {
+    return await fn();
+  } catch (err) {
+    if (times <= 1) {
+      throw err;
+    }
+    return retryAsyncCall(fn, times - 1);
+  }
+};
+
 interface LstData {
   LIQUID_STAKING_INFO: LiquidStakingObjectInfo;
   lstClient: LstClient;
@@ -93,8 +107,13 @@ interface UserData {
   rewardMap: RewardMap;
 }
 
-export async function useFetchUserData(allAppData: any, agent: SuiAgentKit) {
+export async function useFetchUserData(
+  address: string,
+  allAppData: any,
+  agent: SuiAgentKit,
+) {
   const dataFetcher = async () => {
+    // In practice `dataFetcher` won't be called if `allAppData` is falsy
     if (!allAppData) {
       return undefined as unknown as Record<string, UserData>;
     }
@@ -107,7 +126,7 @@ export async function useFetchUserData(allAppData: any, agent: SuiAgentKit) {
         (appData as any).suilendClient,
         (appData as any).refreshedRawReserves,
         (appData as any).reserveMap,
-        agent.wallet_address,
+        address,
       );
 
       const rewardMap = formatRewards(
@@ -127,13 +146,13 @@ export async function useFetchUserData(allAppData: any, agent: SuiAgentKit) {
     return result;
   };
 
-  const data = await dataFetcher();
+  const data = await retryAsyncCall(() => dataFetcher(), 3);
 
   return data;
 }
 
-export async function useFetchAppData(agent: SuiAgentKit) {
-  const isAdmin = agent.wallet_address === ADMIN_ADDRESS;
+export async function useFetchAppData(address: string, agent: SuiAgentKit) {
+  const isAdmin = address === ADMIN_ADDRESS;
 
   const dataFetcher = async () => {
     const result: Record<string, AppData> = {};
@@ -190,12 +209,15 @@ export async function useFetchAppData(agent: SuiAgentKit) {
     return result;
   };
 
-  const data = await dataFetcher();
+  const data = await retryAsyncCall(() => dataFetcher(), 3);
 
   return data;
 }
 
-export async function useFetchAppDataSpringSui(agent: SuiAgentKit) {
+export async function useFetchAppDataSpringSui(
+  address: string,
+  agent: SuiAgentKit,
+) {
   const dataFetcher = async () => {
     const limit10 = pLimit(10);
 
@@ -223,7 +245,7 @@ export async function useFetchAppDataSpringSui(agent: SuiAgentKit) {
       suilendClient,
       refreshedRawReserves,
       reserveMap,
-      agent.wallet_address,
+      address,
     );
 
     const rewardMap = formatRewards(
@@ -248,10 +270,7 @@ export async function useFetchAppDataSpringSui(agent: SuiAgentKit) {
     ];
     const uniqueCoinTypes = Array.from(new Set(coinTypes));
 
-    const coinMetadataMap = await getCoinMetadataMap(
-      agent.client as any,
-      uniqueCoinTypes,
-    );
+    const coinMetadataMap = await getCoinMetadataMap(uniqueCoinTypes);
 
     // SEND Points
     const sendPointsToken = getToken(

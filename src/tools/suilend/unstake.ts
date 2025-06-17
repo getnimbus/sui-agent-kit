@@ -77,7 +77,10 @@ const getTransactionPayload = async (
 
     amount = Number(params.amount) * 10 ** (tokenData?.decimals || 9);
 
-    const appDataSpringSui: any = await useFetchAppDataSpringSui(agent);
+    const appDataSpringSui: any = await useFetchAppDataSpringSui(
+      agent.wallet_address,
+      agent,
+    );
 
     const inToken: any = Object.values(appDataSpringSui.lstDataMap).find(
       (lstData: any) => lstData.token.symbol === params.symbol,

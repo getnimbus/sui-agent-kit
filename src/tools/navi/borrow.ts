@@ -75,7 +75,7 @@ const getTransactionPayload = async (
       pool[handleFormatSymbol(params?.collateral) as keyof Pool];
 
     const coinsDataBorrow = await borrowCoin(
-      transaction,
+      transaction as any,
       poolConfigBorrow,
       amount,
     );

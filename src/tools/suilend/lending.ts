@@ -63,8 +63,12 @@ const getTransactionPayload = async (
       throw new Error("Token address is required");
     }
 
-    const allAppData: any = await useFetchAppData(agent);
-    const allUserData = await useFetchUserData(allAppData, agent);
+    const allAppData: any = await useFetchAppData(agent.wallet_address, agent);
+    const allUserData: any = await useFetchUserData(
+      agent.wallet_address,
+      allAppData,
+      agent,
+    );
 
     const appData: any =
       Object.values(allAppData ?? {}).find(

@@ -95,11 +95,19 @@ const getTransactionPayload = async (
         const toDepositStake = transaction.splitCoins(transaction.gas, [
           amount,
         ]);
-        await depositCoin(transaction, poolConfigStake, toDepositStake, amount);
-      } else {
-        const mergedCoinObject = returnMergedCoins(transaction, coinInfo);
         await depositCoin(
-          transaction,
+          transaction as any,
+          poolConfigStake,
+          toDepositStake,
+          amount,
+        );
+      } else {
+        const mergedCoinObject = returnMergedCoins(
+          transaction as any,
+          coinInfo,
+        );
+        await depositCoin(
+          transaction as any,
           poolConfigStake,
           mergedCoinObject,
           amount,

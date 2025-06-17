@@ -83,7 +83,7 @@ const getTransactionPayload = async (
       pool[handleFormatSymbol(params?.symbol) as keyof Pool];
 
     const coinsDataUnstaking = await withdrawCoin(
-      transaction,
+      transaction as any,
       poolConfigUnStake,
       amount,
     );

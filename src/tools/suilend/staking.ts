@@ -62,9 +62,16 @@ const getTransactionPayload = async (
       throw new Error("Amount must be greater than 0");
     }
 
-    const allAppData: any = await useFetchAppData(agent);
-    const appDataSpringSui: any = await useFetchAppDataSpringSui(agent);
-    const allUserData = await useFetchUserData(allAppData, agent);
+    const allAppData: any = await useFetchAppData(agent.wallet_address, agent);
+    const appDataSpringSui: any = await useFetchAppDataSpringSui(
+      agent.wallet_address,
+      agent,
+    );
+    const allUserData: any = await useFetchUserData(
+      agent.wallet_address,
+      allAppData,
+      agent,
+    );
 
     const appData: any =
       Object.values(allAppData ?? {}).find(
@@ -76,7 +83,6 @@ const getTransactionPayload = async (
       : undefined;
 
     const obligation = userData && userData?.obligations?.[0];
-
     const obligationOwnerCap =
       userData &&
       userData?.obligationOwnerCaps?.find(
@@ -92,7 +98,7 @@ const getTransactionPayload = async (
     }
 
     const outLstData =
-      await appDataSpringSui?.lstDataMap[outToken?.token?.coinType];
+      await appDataSpringSui?.lstDataMap[outToken?.outToken?.coinType];
 
     // check balance for GAS FEE
     const balancesMetadata = await get_holding(agent);
