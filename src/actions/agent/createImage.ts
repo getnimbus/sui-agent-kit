@@ -71,7 +71,7 @@ const createImageAction: Action = {
 
       return {
         status: "success",
-        imageUrl: response.images[0].url,
+        imageUrl: response?.images?.[0]?.url,
         message: "Successfully generated image",
       };
     } catch (error: any) {

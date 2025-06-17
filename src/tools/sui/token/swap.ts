@@ -168,7 +168,7 @@ export async function swap(
           .sender(agent.wallet_address || "") //Optional if you want pass coin later
           .slippage((1 / 100) * 1e6) // Slippage 1%
           .build()
-          .buildTransaction({ client });
+          .buildTransaction({ client: client as any });
 
         break;
       }

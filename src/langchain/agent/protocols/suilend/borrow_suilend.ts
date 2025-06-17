@@ -1,14 +1,14 @@
 import { Tool } from "langchain/tools";
-import { SuiAgentKit } from "../../agent";
-import { ILendingParams } from "../../types/farming";
+import { SuiAgentKit } from "../../../../agent";
+import { IBorrowParams } from "../../../../types/farming";
 
-export class SuiLendingSuilendTool extends Tool {
-  name = "sui_lending_suilend";
-  description = `Lend tokens into Suilend protocol.
+export class SuiBorrowSuilendTool extends Tool {
+  name = "sui_borrow_suilend";
+  description = `Borrow tokens from Suilend protocol.
 
   Inputs (input is a JSON string):
-  amount: number - The amount of tokens to lend, positive number, real number (required)
-  symbol: string - The token symbol to lend (required, e.g., "SUI", "USDC")`;
+  amount: number - The amount of tokens to borrow, positive number, real number (required)
+  collateral: string - The collateral token address to borrow (required, e.g., "0x2::sui::SUI", "0x2::usdc::USDC")`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
@@ -17,13 +17,13 @@ export class SuiLendingSuilendTool extends Tool {
   async _call(input: string): Promise<string> {
     try {
       const parsedInput = JSON.parse(input);
-      const params: ILendingParams = {
-        type: "LENDING",
+      const params: IBorrowParams = {
+        type: "BORROW",
         amount: parsedInput.amount,
-        symbol: parsedInput.symbol,
+        collateral: parsedInput.collateral,
       };
 
-      const result = await this.suiKit.lendingSuilend(params);
+      const result = await this.suiKit.borrowSuilend(params);
       return JSON.stringify({
         status: "success",
         result: {

@@ -12,18 +12,22 @@ export type FARMING_TYPE =
 
 export interface IBaseTransactionParams {
   type: FARMING_TYPE;
+  poolId?: string;
 }
 
 export interface ILendingParams extends IBaseTransactionParams {
   type: "LENDING";
   amount: number;
   symbol: string;
+  tokenAddress?: string;
 }
 
 export interface IBorrowParams extends IBaseTransactionParams {
   type: "BORROW";
   collateral: string;
   amount: number;
+  tokenAddress?: string;
+  listCoinTypeInPosition?: string[];
 }
 
 export interface IRepayParams extends IBaseTransactionParams {
@@ -31,6 +35,7 @@ export interface IRepayParams extends IBaseTransactionParams {
   collateral: string;
   amount: BigInt;
   tokenAddress?: string;
+  listCoinTypeInPosition?: string[];
 }
 
 export interface IAddLpParams extends IBaseTransactionParams {
@@ -54,6 +59,9 @@ export interface IStakingParams extends IBaseTransactionParams {
   type: "STAKING";
   amount: number;
   symbol: string;
+  poolId?: string;
+  tokenAddress?: string;
+  isSinglePool?: boolean;
 }
 
 export interface IUnstakingParams extends IBaseTransactionParams {
@@ -65,8 +73,10 @@ export interface IUnstakingParams extends IBaseTransactionParams {
 
 export interface IWithdrawParams extends IBaseTransactionParams {
   type: "LENDING_WITHDRAW";
-  amount: BigInt;
+  amount: number;
   symbol: string;
+  tokenAddress?: string;
+  listCoinTypeInPosition?: string[];
 }
 
 // Union of all transaction parameter types

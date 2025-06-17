@@ -1,18 +1,18 @@
-import { Action } from "../../types/action";
-import { SuiAgentKit } from "../../agent";
+import { Action } from "../../../../types/action";
+import { SuiAgentKit } from "../../../../agent";
 import { z } from "zod";
-import { lending_suilend } from "../../tools/suilend";
-import { ILendingParams } from "../../types/farming";
+import { ILendingParams } from "../../../../types/farming";
+import { lending_scallop } from "../../../../tools/scallop";
 
-const lendingSuilend: Action = {
-  name: "LENDING_SUILEND",
+const lendingScallop: Action = {
+  name: "LENDING_SCALLOP",
   similes: [
-    "lending suilend",
-    "lend to suilend",
-    "suilend lend",
-    "deposit to suilend",
+    "lending scallop",
+    "lend to scallop",
+    "scallop lend",
+    "deposit to scallop",
   ],
-  description: "Lend tokens into Suilend protocol",
+  description: "Lend tokens into Scallop protocol",
   examples: [
     [
       {
@@ -27,7 +27,7 @@ const lendingSuilend: Action = {
             tx_status: "success",
           },
         },
-        explanation: "Successfully lent 1 SUI into Suilend protocol",
+        explanation: "Successfully lent 1 SUI into Scallop protocol",
       },
     ],
   ],
@@ -42,7 +42,7 @@ const lendingSuilend: Action = {
       symbol: input.symbol,
     };
 
-    const result = await lending_suilend(agent, params);
+    const result = await lending_scallop(agent, params);
 
     return {
       status: "success",
@@ -51,4 +51,4 @@ const lendingSuilend: Action = {
   },
 };
 
-export default lendingSuilend;
+export default lendingScallop;

@@ -1,14 +1,14 @@
 import { Tool } from "langchain/tools";
-import { SuiAgentKit } from "../../agent";
-import { IUnstakingParams } from "../../types/farming";
+import { SuiAgentKit } from "../../../../agent";
+import { IRepayParams } from "../../../../types/farming";
 
-export class SuiWithDrawSuilendTool extends Tool {
-  name = "sui_withdraw_suilend";
-  description = `Withdraw tokens from Suilend protocol.
+export class SuiRepaySuilendTool extends Tool {
+  name = "sui_replay_suilend";
+  description = `Repay tokens into Suilend protocol.
 
   Inputs (input is a JSON string):
-  amount: number - The amount of tokens to withdraw, positive number, real number (required)
-  symbol: string - The token symbol to withdraw (required, e.g., "sSUI")`;
+  amount: number - The amount of tokens to repay, positive number, real number (required)
+  collateral: string - The collateral token address to repay (required, e.g., "0x2::sui::SUI", "0x2::usdc::USDC")`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
@@ -17,13 +17,13 @@ export class SuiWithDrawSuilendTool extends Tool {
   async _call(input: string): Promise<string> {
     try {
       const parsedInput = JSON.parse(input);
-      const params: IUnstakingParams = {
-        type: "UNSTAKING",
+      const params: IRepayParams = {
+        type: "REPAY",
         amount: parsedInput.amount,
-        symbol: parsedInput.symbol,
+        collateral: parsedInput.collateral,
       };
 
-      const result = await this.suiKit.withdrawSuilend(params);
+      const result = await this.suiKit.repaySuilend(params);
       return JSON.stringify({
         status: "success",
         result: {
