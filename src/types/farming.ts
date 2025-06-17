@@ -20,7 +20,6 @@ export interface ILendingParams extends IBaseTransactionParams {
   amount: number;
   symbol: string;
   tokenAddress?: string;
-  isSinglePool?: boolean;
 }
 
 export interface IBorrowParams extends IBaseTransactionParams {
@@ -62,6 +61,7 @@ export interface IStakingParams extends IBaseTransactionParams {
   symbol: string;
   poolId?: string;
   tokenAddress?: string;
+  isSinglePool?: boolean;
 }
 
 export interface IUnstakingParams extends IBaseTransactionParams {
@@ -73,7 +73,7 @@ export interface IUnstakingParams extends IBaseTransactionParams {
 
 export interface IWithdrawParams extends IBaseTransactionParams {
   type: "LENDING_WITHDRAW";
-  amount: BigInt;
+  amount: number;
   symbol: string;
   tokenAddress?: string;
   listCoinTypeInPosition?: string[];

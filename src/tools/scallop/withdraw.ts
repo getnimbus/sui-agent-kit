@@ -1,7 +1,7 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
 
-import { IUnstakingParams } from "../../types/farming";
+import { IWithdrawParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { get_holding } from "../sui/token/get_balance";
 import { ScallopService } from "./utils";
@@ -9,12 +9,12 @@ import { ScallopService } from "./utils";
 /**
  * Withdraw token from Scallop
  * @param agent - SuiAgentKit instance
- * @param params - IUnstakingParams
+ * @param params - IWithdrawParams
  * @returns Promise resolving to the transaction hash
  */
 export async function withdraw_scallop(
   agent: SuiAgentKit,
-  params: IUnstakingParams,
+  params: IWithdrawParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -46,7 +46,7 @@ export async function withdraw_scallop(
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IUnstakingParams,
+  params: IWithdrawParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();

@@ -87,7 +87,7 @@ const getTransactionPayload = async (
       const coinInfoRepay = await getCoins(
         agent.client as any,
         agent.wallet_address,
-        params.tokenAddress,
+        params?.collateral,
       );
       const mergedCoinObject = returnMergedCoins(
         transaction as any,

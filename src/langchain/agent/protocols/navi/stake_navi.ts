@@ -1,14 +1,15 @@
 import { Tool } from "langchain/tools";
-import { SuiAgentKit } from "../../agent";
-import { IStakingParams } from "../../types/farming";
+import { SuiAgentKit } from "../../../../agent";
+import { IStakingParams } from "../../../../types/farming";
 
-export class SuiStakeSuilendTool extends Tool {
-  name = "sui_stake_suilend";
-  description = `Stake tokens into Suilend protocol by SUI.
+export class SuiStakeNaviTool extends Tool {
+  name = "sui_stake_navi";
+  description = `Stake tokens into Navi protocol by SUI.
 
   Inputs (input is a JSON string):
   amount: number - The amount of tokens to stake out, positive number, real number (required)
-  symbol: string - The token symbol to stake out by SUI (required, e.g., "sSUI", "mSUI", "fudSUI", "kSUI", "trevinSUI", "upSUI")`;
+  symbol: string - The token symbol to stake out by SUI (required, e.g., "sSUI", "mSUI", "fudSUI", "kSUI", "trevinSUI", "upSUI")
+  tokenAddress: string - The token address to stake out (required, e.g., "0x2::sui::SUI", "0x2::usdc::USDC")`;
 
   constructor(private suiKit: SuiAgentKit) {
     super();
@@ -21,9 +22,10 @@ export class SuiStakeSuilendTool extends Tool {
         type: "STAKING",
         amount: parsedInput.amount,
         symbol: parsedInput.symbol,
+        tokenAddress: parsedInput.tokenAddress,
       };
 
-      const result = await this.suiKit.stakeSuilend(params);
+      const result = await this.suiKit.stakeNavi(params);
       return JSON.stringify({
         status: "success",
         result: {

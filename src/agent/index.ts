@@ -13,26 +13,50 @@ import {
 
 import { NameRecord } from "@mysten/suins/dist/cjs/types";
 import { ICreateTokenForm } from "../utils/move-template/coin";
-
 import { transfer_token } from "../tools/sui/token/transfer_token";
 import { deploy_token } from "../tools/sui/token/deploy_token";
-import { stake } from "../tools/sui/defi/stake/stake";
-import { get_stake } from "../tools/sui/defi/stake/get_stake";
-import { unstake } from "../tools/sui/defi/stake/unstake";
 import { register_sns } from "../tools/sns/register";
 import { get_name_record } from "../tools/sns/ get_name";
+import { getVaults } from "../tools/sui/defi/get_vaults";
 import {
   ILendingParams,
   IStakingParams,
   IUnstakingParams,
+  IBorrowParams,
+  IRepayParams,
+  IWithdrawParams,
 } from "../types/farming";
+
+import { stake } from "../tools/sui/defi/stake/stake";
+import { get_stake } from "../tools/sui/defi/stake/get_stake";
+import { unstake } from "../tools/sui/defi/stake/unstake";
+
 import {
   lending_suilend,
   staking_suilend,
+  unstake_suilend,
   withdraw_suilend,
+  borrow_suilend,
+  repay_suilend,
 } from "../tools/suilend";
-import { getVaults } from "../tools/sui/defi/get_vaults";
-import { lending_alphafi } from "../tools/alphafi";
+
+import { stake_alphafi, unstake_alphafi } from "../tools/alphafi";
+
+import {
+  lending_alphalend,
+  withdraw_alphalend,
+  borrow_alphalend,
+  repay_alphalend,
+} from "../tools/alphalend";
+
+import { lending_scallop, withdraw_scallop } from "../tools/scallop";
+
+import {
+  staking_navi,
+  unstake_navi,
+  borrow_navi,
+  repay_navi,
+} from "../tools/navi";
 
 /**
  * Main class for interacting with Sui blockchain
@@ -108,18 +132,6 @@ export class SuiAgentKit {
     return deploy_token(this, form);
   }
 
-  async stake(amount: number, poolId: string): Promise<TransactionResponse> {
-    return stake(this, amount, poolId);
-  }
-
-  async getStake(): Promise<DelegatedStake[]> {
-    return get_stake(this);
-  }
-
-  async unstake(stakedSuiId: string): Promise<TransactionResponse> {
-    return unstake(this, stakedSuiId);
-  }
-
   async createPoolCetusCLMM(
     params: ICreatePoolCLMMParams,
   ): Promise<TransactionResponse> {
@@ -142,29 +154,86 @@ export class SuiAgentKit {
     return get_name_record(this, name);
   }
 
+  async getVaults(params: IGetVaultsParams) {
+    return getVaults(this, params);
+  }
+
+  // Native Staking
+  async getStake(): Promise<DelegatedStake[]> {
+    return get_stake(this);
+  }
+  async stake(amount: number, poolId: string): Promise<TransactionResponse> {
+    return stake(this, amount, poolId);
+  }
+  async unstake(stakedSuiId: string): Promise<TransactionResponse> {
+    return unstake(this, stakedSuiId);
+  }
+
+  // Suilend
   async stakeSuilend(params: IStakingParams): Promise<TransactionResponse> {
     return staking_suilend(this, params);
   }
-
+  async unstakeSuilend(params: IUnstakingParams): Promise<TransactionResponse> {
+    return unstake_suilend(this, params);
+  }
+  async borrowSuilend(params: IBorrowParams): Promise<TransactionResponse> {
+    return borrow_suilend(this, params);
+  }
+  async repaySuilend(params: IRepayParams): Promise<TransactionResponse> {
+    return repay_suilend(this, params);
+  }
+  async lendingSuilend(params: ILendingParams): Promise<TransactionResponse> {
+    return lending_suilend(this, params);
+  }
   async withdrawSuilend(
     params: IUnstakingParams,
   ): Promise<TransactionResponse> {
     return withdraw_suilend(this, params);
   }
 
-  async lendingSuilend(params: ILendingParams): Promise<TransactionResponse> {
-    return lending_suilend(this, params);
+  // Alphafi
+  async stakeAlphafi(params: IStakingParams): Promise<TransactionResponse> {
+    return stake_alphafi(this, params);
+  }
+  async unstakeAlphafi(params: IUnstakingParams): Promise<TransactionResponse> {
+    return unstake_alphafi(this, params);
   }
 
-  async getVaults(params: IGetVaultsParams) {
-    return getVaults(this, params);
+  // Alphalend
+  async lendingAlphalend(params: ILendingParams): Promise<TransactionResponse> {
+    return lending_alphalend(this, params);
+  }
+  async withdrawAlphalend(
+    params: IWithdrawParams,
+  ): Promise<TransactionResponse> {
+    return withdraw_alphalend(this, params);
+  }
+  async borrowAlphalend(params: IBorrowParams): Promise<TransactionResponse> {
+    return borrow_alphalend(this, params);
+  }
+  async repayAlphalend(params: IRepayParams): Promise<TransactionResponse> {
+    return repay_alphalend(this, params);
   }
 
-  // async borrowSuilend(params: IBorrowParams): Promise<TransactionResponse> {
-  //   return borrow_suilend(this, params);
-  // }
+  // Scallop
+  async lendingScallop(params: ILendingParams): Promise<TransactionResponse> {
+    return lending_scallop(this, params);
+  }
+  async withdrawScallop(params: IWithdrawParams): Promise<TransactionResponse> {
+    return withdraw_scallop(this, params);
+  }
 
-  async lendingAlphafi(params: ILendingParams): Promise<TransactionResponse> {
-    return lending_alphafi(this, params);
+  // Navi
+  async stakeNavi(params: IStakingParams): Promise<TransactionResponse> {
+    return staking_navi(this, params);
+  }
+  async unstakeNavi(params: IUnstakingParams): Promise<TransactionResponse> {
+    return unstake_navi(this, params);
+  }
+  async borrowNavi(params: IBorrowParams): Promise<TransactionResponse> {
+    return borrow_navi(this, params);
+  }
+  async repayNavi(params: IRepayParams): Promise<TransactionResponse> {
+    return repay_navi(this, params);
   }
 }

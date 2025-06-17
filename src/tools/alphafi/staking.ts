@@ -1,6 +1,6 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
-import { ILendingParams } from "../../types/farming";
+import { IStakingParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { get_holding } from "../sui/token/get_balance";
 import {
@@ -10,14 +10,14 @@ import {
 } from "@alphafi/alphafi-sdk";
 import { getCoinMetadataInWallet } from "../../utils/get_coinmetadata_in_wallet";
 /**
- * Lend token into Alphafi
+ * Stake token into Alphafi
  * @param agent - SuiAgentKit instance
- * @param params - ILendingParams
+ * @param params - IStakingParams
  * @returns Promise resolving to the transaction hash
  */
-export async function lending_alphafi(
+export async function stake_alphafi(
   agent: SuiAgentKit,
-  params: ILendingParams,
+  params: IStakingParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -43,13 +43,13 @@ export async function lending_alphafi(
     };
   } catch (error: any) {
     logger.error(error);
-    throw new Error(`Failed to lend token into Alphafi: ${error.message}`);
+    throw new Error(`Failed to stake token into Alphafi: ${error.message}`);
   }
 }
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: ILendingParams,
+  params: IStakingParams,
 ): Promise<Transaction> => {
   try {
     const coinMetadata = await getCoinMetadataInWallet(agent, params.symbol);
@@ -72,7 +72,7 @@ const getTransactionPayload = async (
     const poolName = poolIdPoolNameMap[params?.poolId];
 
     if (!poolName) {
-      throw new Error("Pool not support lending");
+      throw new Error("Pool not support staking");
     }
 
     // check balance for GAS FEE

@@ -1,7 +1,7 @@
 import { SuiAgentKit, TransactionResponse } from "../../index";
 import logger from "../../utils/logger";
 
-import { IBorrowParams } from "../../types/farming";
+import { IRepayParams } from "../../types/farming";
 import { Transaction } from "@mysten/sui/transactions";
 import { useFetchAppData, useFetchUserData } from "./util";
 import { get_holding } from "../sui/token/get_balance";
@@ -16,7 +16,7 @@ import { get_holding } from "../sui/token/get_balance";
 // NOT COMPLETED
 export async function repay_suilend(
   agent: SuiAgentKit,
-  params: IBorrowParams,
+  params: IRepayParams,
 ): Promise<TransactionResponse> {
   try {
     const client = agent.client;
@@ -50,7 +50,7 @@ export async function repay_suilend(
 
 const getTransactionPayload = async (
   agent: SuiAgentKit,
-  params: IBorrowParams,
+  params: IRepayParams,
 ): Promise<Transaction> => {
   try {
     const transaction = new Transaction();
