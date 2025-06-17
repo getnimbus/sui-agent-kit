@@ -1,13 +1,13 @@
-import { Action } from "../../types/action";
-import { SuiAgentKit } from "../../agent";
+import { Action } from "../../../../types/action";
+import { SuiAgentKit } from "../../../../agent";
 import { z } from "zod";
-import { staking_suilend } from "../../tools/suilend";
-import { IStakingParams } from "../../types/farming";
+import { IUnstakingParams } from "../../../../types/farming";
+import { unstake_navi } from "../../../../tools/navi";
 
-const stakeSuilend: Action = {
-  name: "STAKE_SUILEND",
-  similes: ["stake suilend", "stake to suilend", "suilend stake", "stake LST"],
-  description: "Stake tokens into Suilend protocol",
+const unstakeNavi: Action = {
+  name: "UNSTAKE_NAVI",
+  similes: ["unstake navi", "unstake from navi", "navi unstake", "unstake LST"],
+  description: "Unstake tokens from Navi protocol",
   examples: [
     [
       {
@@ -22,7 +22,7 @@ const stakeSuilend: Action = {
             tx_status: "success",
           },
         },
-        explanation: "Successfully staked 1 sSUI into Suilend protocol",
+        explanation: "Successfully unstaked 1 SUI from Navi protocol",
       },
     ],
   ],
@@ -31,13 +31,13 @@ const stakeSuilend: Action = {
     symbol: z.string(),
   }),
   handler: async (agent: SuiAgentKit, input: Record<string, any>) => {
-    const params: IStakingParams = {
-      type: "STAKING",
+    const params: IUnstakingParams = {
+      type: "UNSTAKING",
       amount: input.amount,
       symbol: input.symbol,
     };
 
-    const result = await staking_suilend(agent, params);
+    const result = await unstake_navi(agent, params);
 
     return {
       status: "success",
@@ -46,4 +46,4 @@ const stakeSuilend: Action = {
   },
 };
 
-export default stakeSuilend;
+export default unstakeNavi;
