@@ -27,6 +27,8 @@ export interface IBorrowParams extends IBaseTransactionParams {
   type: "BORROW";
   collateral: string;
   amount: number;
+  tokenAddress?: string;
+  listCoinTypeInPosition?: string[];
 }
 
 export interface IRepayParams extends IBaseTransactionParams {
@@ -34,6 +36,7 @@ export interface IRepayParams extends IBaseTransactionParams {
   collateral: string;
   amount: BigInt;
   tokenAddress?: string;
+  listCoinTypeInPosition?: string[];
 }
 
 export interface IAddLpParams extends IBaseTransactionParams {
@@ -72,6 +75,8 @@ export interface IWithdrawParams extends IBaseTransactionParams {
   type: "LENDING_WITHDRAW";
   amount: BigInt;
   symbol: string;
+  tokenAddress?: string;
+  listCoinTypeInPosition?: string[];
 }
 
 // Union of all transaction parameter types
