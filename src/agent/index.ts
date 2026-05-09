@@ -43,6 +43,15 @@ import { getVaults } from "../tools/sui/defi/get_vaults";
  * @property {string} wallet_address - Public key of the wallet
  * @property {Config} config - Configuration object
  */
+
+import {
+  epoch_create_vault,
+  epoch_create_multi_vault,
+  epoch_claim_vault,
+  epoch_get_vault_info,
+} from '../tools/epoch'
+import type { CreateVaultParams, CreateMultiVaultParams, VaultInfo } from '../tools/epoch'
+
 export class SuiAgentKit {
   public client: SuiClient;
   public wallet: Ed25519Keypair;
@@ -162,4 +171,20 @@ export class SuiAgentKit {
   // async borrowSuilend(params: IBorrowParams): Promise<TransactionResponse> {
   //   return borrow_suilend(this, params);
   // }
+
+  async epochCreateVault(params: CreateVaultParams): Promise<{ vaultId: string; digest: string }> {
+    return epoch_create_vault(this, params);
+  }
+
+  async epochCreateMultiVault(params: CreateMultiVaultParams): Promise<{ vaultId: string; digest: string }> {
+    return epoch_create_multi_vault(this, params);
+  }
+
+  async epochClaimVault(vaultId: string, tokenType: string, isMulti?: boolean): Promise<{ digest: string }> {
+    return epoch_claim_vault(this, vaultId, tokenType, isMulti);
+  }
+
+  async epochGetVaultInfo(vaultId: string): Promise<VaultInfo> {
+    return epoch_get_vault_info(this, vaultId);
+  }
 }

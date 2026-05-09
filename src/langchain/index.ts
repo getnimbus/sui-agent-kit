@@ -19,6 +19,12 @@ import {
   SuiLendingSuilendTool,
   SuiGetVaultsTool,
 } from "./agent";
+import {
+  SuiEpochCreateVaultTool,
+  SuiEpochCreateMultiVaultTool,
+  SuiEpochClaimVaultTool,
+  SuiEpochGetVaultInfoTool,
+} from "./agent";
 
 export function createSuiTools(suiKit: SuiAgentKit) {
   return [
@@ -38,5 +44,9 @@ export function createSuiTools(suiKit: SuiAgentKit) {
     new SuiWithDrawSuilendTool(suiKit),
     new SuiLendingSuilendTool(suiKit),
     new SuiGetVaultsTool(suiKit),
+    new SuiEpochCreateVaultTool(suiKit),
+    new SuiEpochCreateMultiVaultTool(suiKit),
+    new SuiEpochClaimVaultTool(suiKit),
+    new SuiEpochGetVaultInfoTool(suiKit),
   ];
 }

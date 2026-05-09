@@ -14,3 +14,7 @@ export * from "./stake_suilend";
 export * from "./withdraw_suilend";
 export * from "./lending_suilend";
 export * from "./get_vaults";
+export * from "./epoch_create_vault";
+export * from "./epoch_create_multi_vault";
+export * from "./epoch_claim_vault";
+export * from "./epoch_get_vault_info";
